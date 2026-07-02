@@ -1,0 +1,316 @@
+import { useState } from 'react'
+
+function Admin({ orders, updateOrderStatus, products, setProducts }) {
+  const [name, setName] = useState('')
+  const [price, setPrice] = useState('')
+  const [category, setCategory] = useState('Electronics')
+  const [image, setImage] = useState('')
+  const [stock, setStock] = useState('')
+  const [editingId, setEditingId] = useState(null)
+
+  const totalRevenue = orders.reduce((total, order) => {
+    return total + (order.total || 0)
+  }, 0)
+
+  const totalProductsSold = orders.reduce((total, order) => {
+    return total + (order.items || []).reduce((sum, item) => {
+      return sum + item.quantity
+    }, 0)
+  }, 0)
+
+  const productSales = products.map((product) => {
+    const sold = orders.reduce((total, order) => {
+      const foundItem = (order.items || []).find((item) => item.id === product.id)
+      return total + (foundItem ? foundItem.quantity : 0)
+    }, 0)
+
+    return {
+      name: product.name,
+      sold,
+    }
+  })
+
+  const maxSold = Math.max(...productSales.map((item) => item.sold), 1)
+
+  function resetForm() {
+    setName('')
+    setPrice('')
+    setCategory('Electronics')
+    setImage('')
+    setStock('')
+    setEditingId(null)
+  }
+
+  function handleImageUpload(e) {
+    const file = e.target.files[0]
+
+    if (!file) return
+
+    const reader = new FileReader()
+
+    reader.onloadend = () => {
+      setImage(reader.result)
+    }
+
+    reader.readAsDataURL(file)
+  }
+
+  function addProduct() {
+    if (!name || !price || !image || !stock) {
+      alert('Please fill all fields')
+      return
+    }
+
+    const newProduct = {
+      id: Date.now(),
+      name,
+      price: Number(price),
+      category,
+      image,
+      stock: Number(stock),
+      rating: 4.8,
+      featured: false,
+      description: `This is a high quality ${name}.`,
+    }
+
+    setProducts([...products, newProduct])
+    resetForm()
+  }
+
+  function deleteProduct(id) {
+    setProducts(products.filter((product) => product.id !== id))
+  }
+  function toggleFeatured(id) {
+    const updatedProducts = products.map((product) =>
+      product.id === id
+        ? { ...product, featured: !product.featured }
+        : product
+    )
+
+    setProducts(updatedProducts)
+  }
+
+  function startEdit(product) {
+    setEditingId(product.id)
+    setName(product.name)
+    setPrice(product.price)
+    setCategory(product.category)
+    setImage(product.image)
+    setStock(product.stock || 0)
+  }
+
+  function updateProduct() {
+    if (!name || !price || !image || stock === '') {
+      alert('Please fill all fields')
+      return
+    }
+
+    const updatedProducts = products.map((product) =>
+      product.id === editingId
+        ? {
+          ...product,
+          name,
+          price: Number(price),
+          category,
+          image,
+          stock: Number(stock),
+        }
+        : product
+    )
+
+    setProducts(updatedProducts)
+    resetForm()
+  }
+
+  function cancelEdit() {
+    resetForm()
+  }
+
+  return (
+    <section className="products">
+      <h1>Admin Dashboard</h1>
+
+      <div className="cards">
+        <div className="card">
+          <h3>Total Orders</h3>
+          <h2>{orders.length}</h2>
+        </div>
+
+        <div className="card">
+          <h3>Total Revenue</h3>
+          <h2>${totalRevenue}</h2>
+        </div>
+
+        <div className="card">
+          <h3>Products Sold</h3>
+          <h2>{totalProductsSold}</h2>
+        </div>
+      </div>
+
+      <h2 style={{ marginTop: '50px' }}>Sales Chart</h2>
+
+      <div className="sales-chart card">
+        {productSales.map((item) => (
+          <div className="chart-row" key={item.name}>
+            <span className="chart-label">{item.name}</span>
+
+            <div className="chart-bar-bg">
+              <div
+                className="chart-bar"
+                style={{ width: `${(item.sold / maxSold) * 100}%` }}
+              ></div>
+            </div>
+
+            <span className="chart-value">{item.sold}</span>
+          </div>
+        ))}
+      </div>
+
+      <h2 style={{ marginTop: '40px' }}>Manage Orders</h2>
+
+      {orders.length === 0 ? (
+        <p>No orders yet.</p>
+      ) : (
+        <div className="cards">
+          {orders.map((order) => {
+            const status = order.status || 'Pending'
+
+            return (
+              <div className="card" key={order.id}>
+                <h3>Order #{order.id}</h3>
+
+                <p>
+                  <strong>Customer:</strong> {order.customer?.name || 'Unknown'}
+                </p>
+
+                <p>
+                  <strong>Total:</strong> ${order.total || 0}
+                </p>
+
+                <p>
+                  <strong>Status:</strong>{' '}
+                  <span className={`status ${status.toLowerCase()}`}>
+                    {status}
+                  </span>
+                </p>
+
+                <select
+                  value={status}
+                  onChange={(e) =>
+                    updateOrderStatus(order.id, e.target.value)
+                  }
+                >
+                  <option>Pending</option>
+                  <option>Shipped</option>
+                  <option>Delivered</option>
+                  <option>Cancelled</option>
+                </select>
+              </div>
+            )
+          })}
+        </div>
+      )}
+
+      <h2 style={{ marginTop: '50px' }}>Manage Products</h2>
+
+      <div className="card admin-form">
+        <input
+          type="text"
+          placeholder="Product Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+
+        <input
+          type="number"
+          placeholder="Price"
+          value={price}
+          onChange={(e) => setPrice(e.target.value)}
+        />
+
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleImageUpload}
+        />
+
+        {image && (
+          <img
+            src={image}
+            alt="Preview"
+            className="image-preview"
+          />
+        )}
+
+        <input
+          type="number"
+          placeholder="Stock Quantity"
+          value={stock}
+          onChange={(e) => setStock(e.target.value)}
+        />
+
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+        >
+          <option>Electronics</option>
+          <option>Fashion</option>
+          <option>Audio</option>
+          <option>Gaming</option>
+        </select>
+
+        {editingId ? (
+          <>
+            <button onClick={updateProduct}>Save Product</button>
+
+            <button className="remove-btn" onClick={cancelEdit}>
+              Cancel
+            </button>
+          </>
+        ) : (
+          <button onClick={addProduct}>Add Product</button>
+        )}
+      </div>
+
+      <div className="cards">
+        {products.map((product) => (
+          <div className="card" key={product.id}>
+            <img
+              src={product.image}
+              alt={product.name}
+              className="product-image"
+            />
+
+            <h3>{product.name}</h3>
+            <p>{product.category}</p>
+            <p>${product.price}</p>
+            <p>Stock: {product.stock ?? 0}</p>
+            <label className="featured-toggle">
+              <input
+                type="checkbox"
+                checked={product.featured || false}
+                onChange={() => toggleFeatured(product.id)}
+              />
+              Featured Product
+            </label>
+
+            <div className="admin-buttons">
+              <button onClick={() => startEdit(product)}>
+                Edit
+              </button>
+
+              <button
+                className="remove-btn"
+                onClick={() => deleteProduct(product.id)}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+export default Admin
