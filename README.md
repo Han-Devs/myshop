@@ -3,10 +3,9 @@
 MyShop is a modern responsive e-commerce website built with React and Vite.  
 It includes customer shopping features, authentication, product management, admin dashboard, dark mode, and a polished responsive UI.
 
-## 🌍 Live Demo
+## 🌐 Live Demo
 
-https://myshop-alpha-inky.vercel.app
-
+[Visit MyShop](https://myshop-han-devs1.vercel.app)
 ## ✨ Features
 
 - Product search
