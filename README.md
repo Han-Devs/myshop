@@ -5,7 +5,7 @@ It includes customer shopping features, authentication, product management, admi
 
 ## 🌐 Live Demo
 
-[Visit MyShop](https://myshop-han-devs1.vercel.app)
+[Visit MyShop](https://myshop-alpha-inky.vercel.app)
 ## ✨ Features
 
 - Product search
