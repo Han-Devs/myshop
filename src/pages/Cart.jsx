@@ -27,7 +27,14 @@ function Cart(props) {
           <div className="cart-items-list">
             {props.cartItems.map((item) => (
               <div className="cart-product" key={getProductId(item)}>
-                <img src={item.image} alt={item.name} />
+                <img
+                  src={
+                    item.image?.startsWith("/uploads")
+                      ? `http://localhost:5000${item.image}`
+                      : item.image
+                  }
+                  alt={item.name}
+                />
 
                 <div className="cart-product-info">
                   <h3>{item.name}</h3>

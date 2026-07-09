@@ -1,11 +1,12 @@
-const express = require("express");
-const cors = require("cors");
-require("dotenv").config();
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
 
+import connectDB from "./config/db.js";
+import productRoutes from "./routes/products.js";
+import authRoutes from "./routes/auth.js";
 
-
-const connectDB = require("./config/db");
-const productRoutes = require("./routes/products");
+dotenv.config();
 
 connectDB();
 
@@ -19,14 +20,18 @@ app.use(express.urlencoded({ limit: "10mb", extended: true }));
 const PORT = process.env.PORT || 5000;
 
 app.get("/", (req, res) => {
-    res.send("🚀 MyShop Backend is Running!");
+  res.send("🚀 MyShop Backend is Running!");
 });
+
 app.get("/api", (req, res) => {
-    res.json({
-        message: "Hello from MyShop Backend!",
-    });
+  res.json({
+    message: "Hello from MyShop Backend!",
+  });
 });
+
 app.use("/api/products", productRoutes);
+app.use("/api/auth", authRoutes);
+
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
