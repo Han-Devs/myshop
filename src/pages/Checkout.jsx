@@ -151,7 +151,7 @@ function Checkout({ cartItems, totalPrice, clearCart, saveOrder }) {
             <h2>Order Summary</h2>
 
             {cartItems.map((item) => (
-              <div className="checkout-item" key={item.id}>
+              <div className="checkout-item" key={item._id || item.id}>
                 <span>{item.name} x {item.quantity}</span>
                 <strong>${item.price * item.quantity}</strong>
               </div>

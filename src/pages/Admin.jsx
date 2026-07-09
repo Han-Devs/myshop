@@ -8,6 +8,14 @@ function Admin({ orders, updateOrderStatus, products, setProducts }) {
   const [stock, setStock] = useState('')
   const [editingId, setEditingId] = useState(null)
 
+  const getProductId = (product) => product._id || product.id
+
+  const getImageUrl = (image) => {
+    return image?.startsWith('/uploads')
+      ? `http://localhost:5000${image}`
+      : image
+  }
+
   const totalRevenue = orders.reduce((total, order) => {
     return total + (order.total || 0)
   }, 0)
@@ -20,7 +28,10 @@ function Admin({ orders, updateOrderStatus, products, setProducts }) {
 
   const productSales = products.map((product) => {
     const sold = orders.reduce((total, order) => {
-      const foundItem = (order.items || []).find((item) => item.id === product.id)
+      const foundItem = (order.items || []).find(
+        (item) => getProductId(item) === getProductId(product)
+      )
+
       return total + (foundItem ? foundItem.quantity : 0)
     }, 0)
 
@@ -43,55 +54,72 @@ function Admin({ orders, updateOrderStatus, products, setProducts }) {
 
   function handleImageUpload(e) {
     const file = e.target.files[0]
-
     if (!file) return
-
-    const reader = new FileReader()
-
-    reader.onloadend = () => {
-      setImage(reader.result)
-    }
-
-    reader.readAsDataURL(file)
+    setImage(file)
   }
 
-  function addProduct() {
+  async function addProduct() {
     if (!name || !price || !image || !stock) {
       alert('Please fill all fields')
       return
     }
 
-    const newProduct = {
-      id: Date.now(),
-      name,
-      price: Number(price),
-      category,
-      image,
-      stock: Number(stock),
-      rating: 4.8,
-      featured: false,
-      description: `This is a high quality ${name}.`,
-    }
+    const formData = new FormData()
 
-    setProducts([...products, newProduct])
+    formData.append('name', name)
+    formData.append('price', price)
+    formData.append('category', category)
+    formData.append('stock', stock)
+    formData.append('rating', '4.8')
+    formData.append('featured', 'false')
+    formData.append('description', `This is a high quality ${name}.`)
+    formData.append('image', image)
+
+    const response = await fetch('http://localhost:5000/api/products', {
+      method: 'POST',
+      body: formData,
+    })
+
+    const data = await response.json()
+
+    setProducts([...products, data.product])
     resetForm()
   }
 
-  function deleteProduct(id) {
-    setProducts(products.filter((product) => product.id !== id))
-  }
-  function toggleFeatured(id) {
-    const updatedProducts = products.map((product) =>
-      product.id === id
-        ? { ...product, featured: !product.featured }
-        : product
-    )
+  async function deleteProduct(id) {
+    await fetch(`http://localhost:5000/api/products/${id}`, {
+      method: 'DELETE',
+    })
 
-    setProducts(updatedProducts)
+    setProducts(products.filter((product) => getProductId(product) !== id))
+  }
+
+  async function toggleFeatured(id) {
+    const product = products.find((product) => getProductId(product) === id)
+
+    if (!product) return
+
+    const response = await fetch(`http://localhost:5000/api/products/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        featured: !product.featured,
+      }),
+    })
+
+    const data = await response.json()
+
+    setProducts(
+      products.map((product) =>
+        getProductId(product) === id ? data.product : product
+      )
+    )
   }
 
   function startEdit(product) {
-    setEditingId(product.id)
+    setEditingId(getProductId(product))
     setName(product.name)
     setPrice(product.price)
     setCategory(product.category)
@@ -99,26 +127,34 @@ function Admin({ orders, updateOrderStatus, products, setProducts }) {
     setStock(product.stock || 0)
   }
 
-  function updateProduct() {
-    if (!name || !price || !image || stock === '') {
+  async function updateProduct() {
+    if (!name || !price || stock === '') {
       alert('Please fill all fields')
       return
     }
 
-    const updatedProducts = products.map((product) =>
-      product.id === editingId
-        ? {
-          ...product,
-          name,
-          price: Number(price),
-          category,
-          image,
-          stock: Number(stock),
-        }
-        : product
+    const response = await fetch(`http://localhost:5000/api/products/${editingId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name,
+        price: Number(price),
+        category,
+        image,
+        stock: Number(stock),
+      }),
+    })
+
+    const data = await response.json()
+
+    setProducts(
+      products.map((product) =>
+        getProductId(product) === editingId ? data.product : product
+      )
     )
 
-    setProducts(updatedProducts)
     resetForm()
   }
 
@@ -236,7 +272,11 @@ function Admin({ orders, updateOrderStatus, products, setProducts }) {
 
         {image && (
           <img
-            src={image}
+            src={
+              typeof image === 'string'
+                ? getImageUrl(image)
+                : URL.createObjectURL(image)
+            }
             alt="Preview"
             className="image-preview"
           />
@@ -274,9 +314,9 @@ function Admin({ orders, updateOrderStatus, products, setProducts }) {
 
       <div className="cards">
         {products.map((product) => (
-          <div className="card" key={product.id}>
+          <div className="card" key={getProductId(product)}>
             <img
-              src={product.image}
+              src={getImageUrl(product.image)}
               alt={product.name}
               className="product-image"
             />
@@ -285,11 +325,12 @@ function Admin({ orders, updateOrderStatus, products, setProducts }) {
             <p>{product.category}</p>
             <p>${product.price}</p>
             <p>Stock: {product.stock ?? 0}</p>
+
             <label className="featured-toggle">
               <input
                 type="checkbox"
                 checked={product.featured || false}
-                onChange={() => toggleFeatured(product.id)}
+                onChange={() => toggleFeatured(getProductId(product))}
               />
               Featured Product
             </label>
@@ -301,7 +342,7 @@ function Admin({ orders, updateOrderStatus, products, setProducts }) {
 
               <button
                 className="remove-btn"
-                onClick={() => deleteProduct(product.id)}
+                onClick={() => deleteProduct(getProductId(product))}
               >
                 Delete
               </button>

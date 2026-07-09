@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom'
 
 function Cart(props) {
+  const getProductId = (item) => item._id || item.id
+
   return (
     <section className="cart-page">
       <div className="products-header">
@@ -24,7 +26,7 @@ function Cart(props) {
         <div className="cart-layout">
           <div className="cart-items-list">
             {props.cartItems.map((item) => (
-              <div className="cart-product" key={item.id}>
+              <div className="cart-product" key={getProductId(item)}>
                 <img src={item.image} alt={item.name} />
 
                 <div className="cart-product-info">
@@ -32,13 +34,13 @@ function Cart(props) {
                   <p>${item.price} each</p>
 
                   <div className="cart-quantity">
-                    <button onClick={() => props.changeQuantity(item.id, -1)}>
+                    <button onClick={() => props.changeQuantity(getProductId(item), -1)}>
                       -
                     </button>
 
                     <span>{item.quantity}</span>
 
-                    <button onClick={() => props.changeQuantity(item.id, 1)}>
+                    <button onClick={() => props.changeQuantity(getProductId(item), 1)}>
                       +
                     </button>
                   </div>
@@ -49,7 +51,7 @@ function Cart(props) {
 
                   <button
                     className="remove-btn"
-                    onClick={() => props.removeFromCart(item.id)}
+                    onClick={() => props.removeFromCart(getProductId(item))}
                   >
                     Remove
                   </button>

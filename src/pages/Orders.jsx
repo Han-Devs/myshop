@@ -49,7 +49,10 @@ function Orders({ orders, clearOrders }) {
                     <h4>Items</h4>
 
                     {(order.items || []).map((item) => (
-                      <div className="order-item" key={item.id}>
+                      <div
+                        className="order-item"
+                        key={`${item._id || item.id}-${order.id}`}
+                      >
                         <span>{item.name} x {item.quantity}</span>
                         <strong>${item.price * item.quantity}</strong>
                       </div>

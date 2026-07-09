@@ -1,0 +1,48 @@
+const products = [
+  {
+    id: 1,
+    image: "phone",
+    name: "Phone",
+    price: 799,
+    category: "Electronics",
+    stock: 10,
+    rating: 4.8,
+    featured: true,
+    description: "Latest smartphone with premium features.",
+  },
+  {
+    id: 2,
+    image: "shoes",
+    name: "Shoes",
+    price: 99,
+    category: "Fashion",
+    stock: 8,
+    rating: 4.8,
+    featured: true,
+    description: "Comfortable everyday sneakers.",
+  },
+  {
+    id: 3,
+    image: "laptop",
+    name: "Laptop",
+    price: 1200,
+    category: "Gaming",
+    stock: 5,
+    rating: 4.8,
+    featured: true,
+    description: "High-performance gaming laptop.",
+  },
+  {
+    id: 4,
+    image: "razor",
+    name: "Razor Headset",
+    price: 89,
+    category: "Audio",
+    stock: 12,
+    rating: 4.8,
+    featured: true,
+    description: "Immersive gaming headset with surround sound.",
+  },
+]
+
+module.exports = products

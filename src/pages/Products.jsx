@@ -6,6 +6,14 @@ function Products({ products, addToCart, toggleWishlist, wishlistItems }) {
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState('All')
   const [sort, setSort] = useState('default')
+  const [searchParams] = useSearchParams()
+
+  const getProductId = (product) => product._id || product.id
+
+  useEffect(() => {
+    const selectedCategory = searchParams.get('category')
+    if (selectedCategory) setCategory(selectedCategory)
+  }, [searchParams])
 
   const filteredProducts = products.filter((product) => {
     const matchesSearch = product.name
@@ -24,14 +32,7 @@ function Products({ products, addToCart, toggleWishlist, wishlistItems }) {
     if (sort === 'name-za') return b.name.localeCompare(a.name)
     return 0
   })
-  const [searchParams] = useSearchParams()
-  useEffect(() => {
-    const selectedCategory = searchParams.get('category')
 
-    if (selectedCategory) {
-      setCategory(selectedCategory)
-    }
-  }, [searchParams])
   return (
     <section className="products products-page">
       <div className="products-header">
@@ -90,8 +91,8 @@ function Products({ products, addToCart, toggleWishlist, wishlistItems }) {
         <div className="cards product-grid">
           {sortedProducts.map((product) => (
             <ProductCard
-              key={product.id}
-              id={product.id}
+              key={getProductId(product)}
+              id={getProductId(product)}
               image={product.image}
               name={product.name}
               price={product.price}
@@ -99,7 +100,9 @@ function Products({ products, addToCart, toggleWishlist, wishlistItems }) {
               stock={product.stock}
               addToCart={() => addToCart(product)}
               toggleWishlist={() => toggleWishlist(product)}
-              isWishlisted={wishlistItems.some((item) => item.id === product.id)}
+              isWishlisted={wishlistItems.some(
+                (item) => getProductId(item) === getProductId(product)
+              )}
             />
           ))}
         </div>

@@ -3,25 +3,37 @@ import { Link, useParams } from 'react-router-dom'
 function ProductDetails({ products, addToCart, toggleWishlist, wishlistItems }) {
   const { id } = useParams()
 
-  const product = products.find((item) => String(item.id) === String(id))
+  const getProductId = (product) => product._id || product.id
+
+  const getImageUrl = (image) => {
+    return image?.startsWith('/uploads')
+      ? `http://localhost:5000${image}`
+      : image
+  }
+
+  const product = products.find(
+    (item) => String(getProductId(item)) === String(id)
+  )
 
   if (!product) {
     return <h2 className="not-found">Product Not Found</h2>
   }
 
-  const isWishlisted = wishlistItems.some((item) => item.id === product.id)
+  const isWishlisted = wishlistItems.some(
+    (item) => getProductId(item) === getProductId(product)
+  )
 
   const relatedProducts = products.filter(
     (item) =>
       item.category === product.category &&
-      String(item.id) !== String(product.id)
+      String(getProductId(item)) !== String(getProductId(product))
   )
 
   return (
     <section className="details-page">
       <div className="details-card">
         <div className="details-image-box">
-          <img src={product.image} alt={product.name} />
+          <img src={getImageUrl(product.image)} alt={product.name} />
         </div>
 
         <div className="details-info">
@@ -70,9 +82,9 @@ function ProductDetails({ products, addToCart, toggleWishlist, wishlistItems }) 
 
         <div className="related-products">
           {relatedProducts.slice(0, 3).map((item) => (
-            <Link to={`/product/${item.id}`} key={item.id}>
+            <Link to={`/product/${getProductId(item)}`} key={getProductId(item)}>
               <div className="related-card">
-                <img src={item.image} alt={item.name} />
+                <img src={getImageUrl(item.image)} alt={item.name} />
                 <h3>{item.name}</h3>
                 <p>${item.price}</p>
               </div>

@@ -1,6 +1,22 @@
 import { Link } from 'react-router-dom'
 
 function Wishlist({ wishlistItems, toggleWishlist, addToCart }) {
+  const getProductId = (item) => item._id || item.id
+
+  const getImageUrl = (image) => {
+    if (!image) return ''
+
+    if (image.startsWith('/uploads')) {
+      return `http://localhost:5000${image}`
+    }
+
+    if (image.startsWith('uploads')) {
+      return `http://localhost:5000/${image}`
+    }
+
+    return image
+  }
+
   return (
     <section className="wishlist-page">
       <div className="products-header">
@@ -22,11 +38,14 @@ function Wishlist({ wishlistItems, toggleWishlist, addToCart }) {
         </div>
       ) : (
         <div className="cards wishlist-grid">
-          {wishlistItems.map((item) => (
-            <div className="wishlist-card" key={item.id}>
+          {wishlistItems.map((item, index) => (
+            <div
+              className="wishlist-card"
+              key={getProductId(item) || index}
+            >
               <div className="wishlist-image-box">
                 <img
-                  src={item.image}
+                  src={getImageUrl(item.image)}
                   alt={item.name}
                   className="product-image"
                 />

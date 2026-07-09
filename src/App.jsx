@@ -1,8 +1,5 @@
 import { Routes, Route } from 'react-router-dom'
-import phone from './assets/images/phone.jpg'
-import shoes from './assets/images/shoes.jpg'
-import laptop from './assets/images/laptop.jpg'
-import razor from './assets/images/razor.jpg'
+
 import { useState, useEffect } from 'react'
 import './App.css'
 
@@ -51,67 +48,27 @@ function App() {
     return savedTheme ? JSON.parse(savedTheme) : false
   })
 
-  const [products, setProducts] = useState(() => {
-    const savedProducts = localStorage.getItem('products')
+  const [products, setProducts] = useState([])
 
-    return savedProducts
-      ? JSON.parse(savedProducts)
-      : [
-        {
-          id: 1,
-          image: phone,
-          name: 'Phone',
-          price: 799,
-          category: 'Electronics',
-          stock: 10,
-          rating: 4.8,
-          featured: true,
-          description: 'Latest smartphone with premium features.',
-        },
-
-        {
-          id: 2,
-          image: shoes,
-          name: 'Shoes',
-          price: 99,
-          category: 'Fashion',
-          stock: 8,
-          rating: 4.8,
-          featured: true,
-          description: 'Comfortable everyday sneakers.',
-        },
-
-        {
-          id: 3,
-          image: laptop,
-          name: 'Laptop',
-          price: 1200,
-          category: 'Gaming',
-          stock: 5,
-          rating: 4.8,
-          featured: true,
-          description: 'High-performance gaming laptop.',
-        },
-
-        {
-          id: 4,
-          image: razor,
-          name: 'Razor Headset',
-          price: 89,
-          category: 'Audio',
-          stock: 12,
-          rating: 4.8,
-          featured: true,
-          description: 'Immersive gaming headset with surround sound.',
-        },
-      ]
-  })
   const [currentUser, setCurrentUser] = useState(() => {
     return JSON.parse(localStorage.getItem('currentUser'))
   })
+
   const [isAdmin, setIsAdmin] = useState(() => {
     return JSON.parse(localStorage.getItem('isAdmin')) || false
   })
+
+  useEffect(() => {
+    fetch('http://localhost:5000/api/products')
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('Products from backend:', data)
+        setProducts(data)
+      })
+      .catch((error) => {
+        console.error('Backend fetch error:', error)
+      })
+  }, [])
 
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(cartItems))
@@ -130,12 +87,8 @@ function App() {
   }, [darkMode])
 
   useEffect(() => {
-    localStorage.setItem('products', JSON.stringify(products))
-  }, [products])
-  useEffect(() => {
     localStorage.setItem('isAdmin', JSON.stringify(isAdmin))
   }, [isAdmin])
-
   const totalPrice = cartItems.reduce((total, item) => {
     return total + item.price * item.quantity
   }, 0)
@@ -148,59 +101,69 @@ function App() {
       setToast('')
     }, 2000)
   }
+  function getProductId(product) {
+    return product._id || product.id
+  }
 
   function addToCart(product) {
+    const productId = getProductId(product)
+
     if (product.stock <= 0) {
       showToast(`${product.name} is out of stock`)
       return
     }
 
-    const existingItem = cartItems.find((item) => item.id === product.id)
+    const existingItem = cartItems.find((item) => getProductId(item) === productId)
 
     if (existingItem) {
-      const updatedCart = cartItems.map((item) =>
-        item.id === product.id
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
+      setCartItems(
+        cartItems.map((item) =>
+          getProductId(item) === productId
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        )
       )
-
-      setCartItems(updatedCart)
     } else {
       setCartItems([...cartItems, { ...product, quantity: 1 }])
     }
 
-    const updatedProducts = products.map((item) =>
-      item.id === product.id
-        ? { ...item, stock: item.stock - 1 }
-        : item
+    setProducts(
+      products.map((item) =>
+        getProductId(item) === productId
+          ? { ...item, stock: item.stock - 1 }
+          : item
+      )
     )
-
-    setProducts(updatedProducts)
 
     showToast(`${product.name} added to cart`)
   }
 
   function removeFromCart(idToRemove) {
-    const removedItem = cartItems.find((item) => item.id === idToRemove)
+    const removedItem = cartItems.find(
+      (item) => getProductId(item) === idToRemove
+    )
 
     if (removedItem) {
       setProducts(
         products.map((product) =>
-          product.id === idToRemove
+          getProductId(product) === idToRemove
             ? { ...product, stock: product.stock + removedItem.quantity }
             : product
         )
       )
     }
 
-    const updatedCart = cartItems.filter((item) => item.id !== idToRemove)
+    const updatedCart = cartItems.filter(
+      (item) => getProductId(item) !== idToRemove
+    )
+
     setCartItems(updatedCart)
     showToast('Item removed from cart')
   }
 
   function changeQuantity(id, amount) {
-    const cartItem = cartItems.find((item) => item.id === id)
-    const product = products.find((product) => product.id === id)
+    const cartItem = cartItems.find((item) => getProductId(item) === id)
+    const product = products.find((product) => getProductId(product) === id)
 
     if (!cartItem || !product) return
 
@@ -211,7 +174,7 @@ function App() {
 
     const updatedCart = cartItems
       .map((item) =>
-        item.id === id
+        getProductId(item) === id
           ? { ...item, quantity: item.quantity + amount }
           : item
       )
@@ -221,18 +184,22 @@ function App() {
 
     setProducts(
       products.map((product) =>
-        product.id === id
+        getProductId(product) === id
           ? { ...product, stock: product.stock - amount }
           : product
       )
     )
   }
   function toggleWishlist(product) {
-    const existingItem = wishlistItems.find((item) => item.id === product.id)
+    const productId = getProductId(product)
+
+    const existingItem = wishlistItems.find(
+      (item) => getProductId(item) === productId
+    )
 
     if (existingItem) {
       const updatedWishlist = wishlistItems.filter(
-        (item) => item.id !== product.id
+        (item) => getProductId(item) !== productId
       )
 
       setWishlistItems(updatedWishlist)
@@ -269,7 +236,7 @@ function App() {
 
   return (
     <div className={darkMode ? 'app dark' : 'app'}>
-       <ScrollToTop />
+      <ScrollToTop />
       <Navbar
         cartCount={cartItems.length}
         wishlistCount={wishlistItems.length}
@@ -303,8 +270,8 @@ function App() {
                     .slice(0, 5)
                     .map((product) => (
                       <ProductCard
-                        key={product.id}
-                        id={product.id}
+                        key={getProductId(product)}
+                        id={getProductId(product)}
                         image={product.image}
                         name={product.name}
                         price={product.price}
@@ -313,7 +280,7 @@ function App() {
                         addToCart={() => addToCart(product)}
                         toggleWishlist={() => toggleWishlist(product)}
                         isWishlisted={wishlistItems.some(
-                          (item) => item.id === product.id
+                          (item) => getProductId(item) === getProductId(product)
                         )}
                       />
                     ))}

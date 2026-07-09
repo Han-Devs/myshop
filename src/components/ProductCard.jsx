@@ -11,7 +11,15 @@ function ProductCard(props) {
 
       <Link to={`/product/${props.id}`} className="product-card-link">
         <div className="product-image-box">
-          <img src={props.image} alt={props.name} className="product-image" />
+          <img
+            src={
+              props.image?.startsWith("/uploads")
+                ? `http://localhost:5000${props.image}`
+                : props.image
+            }
+            alt={props.name}
+            className="product-image"
+          />
         </div>
 
         <h3>{props.name}</h3>
