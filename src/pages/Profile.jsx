@@ -1,71 +1,104 @@
-import { useState } from 'react'
+import { useState, useEffect } from "react";
 
 function Profile({ currentUser, setCurrentUser }) {
-  const [name, setName] = useState(currentUser?.name || '')
-  const [currentPassword, setCurrentPassword] = useState('')
-  const [newPassword, setNewPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
+  const [name, setName] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-  function handleUpdate(e) {
-    e.preventDefault()
+  useEffect(() => {
+    async function fetchProfile() {
+      try {
+        const token = localStorage.getItem("token");
 
-    if (!currentUser) {
-      alert('Please login first')
-      return
+        const response = await fetch("http://localhost:5000/api/users/profile", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          alert(data.message);
+          return;
+        }
+
+        const backendUser = {
+          ...data.user,
+          name: data.user.username,
+        };
+
+        setCurrentUser(backendUser);
+        localStorage.setItem("currentUser", JSON.stringify(backendUser));
+        setName(data.user.username);
+      } catch (error) {
+        console.error(error);
+        alert("Server error");
+      }
     }
+
+    fetchProfile();
+  }, [setCurrentUser]);
+
+  async function handleUpdate(e) {
+    e.preventDefault();
 
     if (!name) {
-      alert('Username cannot be empty')
-      return
+      alert("Username cannot be empty");
+      return;
     }
 
-    const users = JSON.parse(localStorage.getItem('users')) || []
-    let updatedPassword = currentUser.password
-
-    if (currentPassword || newPassword || confirmPassword) {
-      if (currentPassword !== currentUser.password) {
-        alert('Current password is incorrect')
-        return
-      }
-
-      if (!newPassword || !confirmPassword) {
-        alert('Please fill new password and confirm password')
-        return
-      }
-
-      if (newPassword !== confirmPassword) {
-        alert('New passwords do not match')
-        return
-      }
-
-      if (newPassword.length < 6) {
-        alert('Password must be at least 6 characters')
-        return
-      }
-
-      updatedPassword = newPassword
+    if (newPassword !== confirmPassword) {
+      alert("New passwords do not match");
+      return;
     }
 
-    const updatedUser = {
-      ...currentUser,
-      name,
-      password: updatedPassword,
+    if (newPassword && newPassword.length < 6) {
+      alert("Password must be at least 6 characters");
+      return;
     }
 
-    const updatedUsers = users.map((user) =>
-      user.id === currentUser.id ? updatedUser : user
-    )
+    try {
+      const token = localStorage.getItem("token");
 
-    localStorage.setItem('users', JSON.stringify(updatedUsers))
-    localStorage.setItem('currentUser', JSON.stringify(updatedUser))
+      const response = await fetch("http://localhost:5000/api/users/profile", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          username: name,
+          currentPassword,
+          newPassword,
+        }),
+      });
 
-    setCurrentUser(updatedUser)
+      const data = await response.json();
 
-    alert('Profile updated successfully')
+      if (!response.ok) {
+        alert(data.message);
+        return;
+      }
 
-    setCurrentPassword('')
-    setNewPassword('')
-    setConfirmPassword('')
+      const updatedUser = {
+        ...data.user,
+        name: data.user.username,
+      };
+
+      localStorage.setItem("currentUser", JSON.stringify(updatedUser));
+      setCurrentUser(updatedUser);
+
+      alert("Profile updated successfully");
+
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (error) {
+      console.error(error);
+      alert("Server error");
+    }
   }
 
   return (
@@ -86,6 +119,7 @@ function Profile({ currentUser, setCurrentUser }) {
           <p>
             <strong>Name:</strong> {currentUser?.name}
           </p>
+
           <p>
             <strong>Email:</strong> {currentUser?.email}
           </p>
@@ -93,6 +127,7 @@ function Profile({ currentUser, setCurrentUser }) {
 
         <form className="profile-form" onSubmit={handleUpdate}>
           <label>Username</label>
+
           <input
             type="text"
             placeholder="Username"
@@ -103,6 +138,7 @@ function Profile({ currentUser, setCurrentUser }) {
           <h3>Change Password</h3>
 
           <label>Current Password</label>
+
           <input
             type="password"
             placeholder="Enter current password"
@@ -111,6 +147,7 @@ function Profile({ currentUser, setCurrentUser }) {
           />
 
           <label>New Password</label>
+
           <input
             type="password"
             placeholder="Enter new password"
@@ -119,6 +156,7 @@ function Profile({ currentUser, setCurrentUser }) {
           />
 
           <label>Confirm New Password</label>
+
           <input
             type="password"
             placeholder="Confirm new password"
@@ -130,7 +168,7 @@ function Profile({ currentUser, setCurrentUser }) {
         </form>
       </div>
     </section>
-  )
+  );
 }
 
-export default Profile
+export default Profile;
