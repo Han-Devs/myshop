@@ -1,62 +1,89 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 function Login({ setCurrentUser }) {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  function handleLogin(e) {
-    e.preventDefault()
+  async function handleLogin(e) {
+    e.preventDefault();
 
-    const savedUsers = JSON.parse(localStorage.getItem('users')) || []
-
-    const foundUser = savedUsers.find(
-      (user) => user.email === email && user.password === password
-    )
-
-    if (!foundUser) {
-      alert('Invalid email or password')
-      return
+    if (!email || !password) {
+      alert("Please fill all fields");
+      return;
     }
 
-    localStorage.setItem('currentUser', JSON.stringify(foundUser))
-    setCurrentUser(foundUser)
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
 
-    alert('Login successful')
-    navigate('/')
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message);
+        return;
+      }
+
+      const loggedInUser = {
+        ...data.user,
+        name: data.user.username,
+      };
+
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("currentUser", JSON.stringify(loggedInUser));
+
+      setCurrentUser(loggedInUser);
+
+      alert("Login successful");
+
+      navigate("/");
+    } catch (error) {
+      console.error(error);
+      alert("Server error");
+    }
   }
 
   return (
-  <section className="auth-page">
-    <form className="auth-card" onSubmit={handleLogin}>
-      <div className="auth-icon">👤</div>
-      <h1>Customer Login</h1>
-      <p>Welcome back to MyShop.</p>
+    <section className="auth-page">
+      <form className="auth-card" onSubmit={handleLogin}>
+        <div className="auth-icon">👤</div>
 
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
+        <h1>Customer Login</h1>
 
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
+        <p>Welcome back to MyShop.</p>
 
-      <button type="submit">Login</button>
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
 
-      <p className="auth-link">
-        Don't have an account? <Link to="/register">Register</Link>
-      </p>
-    </form>
-  </section>
-)
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+
+        <button type="submit">Login</button>
+
+        <p className="auth-link">
+          Don't have an account? <Link to="/register">Register</Link>
+        </p>
+      </form>
+    </section>
+  );
 }
 
-export default Login
+export default Login;

@@ -404,7 +404,7 @@ function App() {
         <Route
           path="/wishlist"
           element={
-            <ProtectedRoute currentUser={currentUser}>
+            <ProtectedRoute>
               <Wishlist
                 wishlistItems={wishlistItems}
                 toggleWishlist={toggleWishlist}
@@ -416,7 +416,7 @@ function App() {
         <Route
           path="/checkout"
           element={
-            <ProtectedRoute currentUser={currentUser}>
+            <ProtectedRoute>
               <Checkout
                 cartItems={cartItems}
                 totalPrice={totalPrice}
@@ -430,7 +430,7 @@ function App() {
         <Route
           path="/orders"
           element={
-            <ProtectedRoute currentUser={currentUser}>
+            <ProtectedRoute>
               <Orders
                 orders={orders}
                 clearOrders={clearOrders}
@@ -474,7 +474,7 @@ function App() {
         <Route
           path="/profile"
           element={
-            <ProtectedRoute currentUser={currentUser}>
+            <ProtectedRoute>
               <Profile
                 currentUser={currentUser}
                 setCurrentUser={setCurrentUser}

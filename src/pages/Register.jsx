@@ -1,84 +1,88 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
-function Register({ setCurrentUser }) {
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+function Register() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  function handleRegister(e) {
-    e.preventDefault()
+  async function handleRegister(e) {
+    e.preventDefault();
 
     if (!name || !email || !password) {
-      alert('Please fill all fields')
-      return
+      alert("Please fill all fields");
+      return;
     }
 
-    const savedUsers = JSON.parse(localStorage.getItem('users')) || []
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: name,
+          email,
+          password,
+        }),
+      });
 
-    const existingUser = savedUsers.find((user) => user.email === email)
+      const data = await response.json();
 
-    if (existingUser) {
-      alert('Email already registered')
-      return
+      if (!response.ok) {
+        alert(data.message);
+        return;
+      }
+
+      alert("Account created successfully! Please login.");
+
+      navigate("/login");
+    } catch (error) {
+      console.error(error);
+      alert("Server error");
     }
-
-    const newUser = {
-      id: Date.now(),
-      name,
-      email,
-      password,
-    }
-
-    const updatedUsers = [...savedUsers, newUser]
-
-    localStorage.setItem('users', JSON.stringify(updatedUsers))
-    localStorage.setItem('currentUser', JSON.stringify(newUser))
-
-    setCurrentUser(newUser)
-
-    alert('Account created successfully')
-    navigate('/')
   }
 
- return (
-  <section className="auth-page">
-    <form className="auth-card" onSubmit={handleRegister}>
-      <div className="auth-icon">✨</div>
-      <h1>Create Account</h1>
-      <p>Join MyShop and start shopping smarter.</p>
+  return (
+    <section className="auth-page">
+      <form className="auth-card" onSubmit={handleRegister}>
+        <div className="auth-icon">✨</div>
 
-      <input
-        type="text"
-        placeholder="Full Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
+        <h1>Create Account</h1>
 
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
+        <p>Join MyShop and start shopping smarter.</p>
 
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
+        <input
+          type="text"
+          placeholder="Full Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
 
-      <button type="submit">Register</button>
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
 
-      <p className="auth-link">
-        Already have an account? <Link to="/login">Login</Link>
-      </p>
-    </form>
-  </section>
-)
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+
+        <button type="submit">Register</button>
+
+        <p className="auth-link">
+          Already have an account? <Link to="/login">Login</Link>
+        </p>
+      </form>
+    </section>
+  );
 }
 
-export default Register
+export default Register;

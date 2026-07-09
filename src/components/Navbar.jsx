@@ -19,6 +19,8 @@ function Navbar({
 
   function handleLogout() {
     localStorage.removeItem('currentUser')
+    localStorage.removeItem('token') // Remove JWT token too
+
     setCurrentUser(null)
     closeMenu()
   }
