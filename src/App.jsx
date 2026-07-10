@@ -26,10 +26,7 @@ import Profile from './pages/Profile'
 import AdminLogin from './pages/AdminLogin'
 
 function App() {
-  const [cartItems, setCartItems] = useState(() => {
-    const savedCart = localStorage.getItem('cart')
-    return savedCart ? JSON.parse(savedCart) : []
-  })
+  const [cartItems, setCartItems] = useState([])
 
   const [wishlistItems, setWishlistItems] = useState(() => {
     const savedWishlist = localStorage.getItem('wishlist')
@@ -69,10 +66,41 @@ function App() {
         console.error('Backend fetch error:', error)
       })
   }, [])
-
   useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(cartItems))
-  }, [cartItems])
+    async function fetchUserCart() {
+      const token = getToken()
+
+      if (!currentUser || !token) {
+        setCartItems([])
+        return
+      }
+
+      try {
+        const response = await fetch('http://localhost:5000/api/cart', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+
+        const data = await response.json()
+
+        if (!response.ok) {
+          console.error(data.message)
+          setCartItems([])
+          return
+        }
+
+        setCartItems(data.items || [])
+      } catch (error) {
+        console.error('Cart fetch error:', error)
+        setCartItems([])
+      }
+    }
+
+    fetchUserCart()
+  }, [currentUser])
+
+
 
   useEffect(() => {
     localStorage.setItem('wishlist', JSON.stringify(wishlistItems))
@@ -102,93 +130,182 @@ function App() {
     }, 2000)
   }
   function getProductId(product) {
-    return product._id || product.id
+    return product.productId || product._id || product.id
+  }
+  function getToken() {
+    return localStorage.getItem('token')
   }
 
-  function addToCart(product) {
-    const productId = getProductId(product)
+  async function addToCart(product) {
+    const token = getToken()
+
+    if (!token || !currentUser) {
+      showToast('Please login to add products to your cart')
+      return
+    }
 
     if (product.stock <= 0) {
       showToast(`${product.name} is out of stock`)
       return
     }
 
-    const existingItem = cartItems.find((item) => getProductId(item) === productId)
+    const productId = getProductId(product)
 
-    if (existingItem) {
-      setCartItems(
-        cartItems.map((item) =>
+    try {
+      const response = await fetch('http://localhost:5000/api/cart', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          _id: productId,
+          name: product.name,
+          image: product.image,
+          price: product.price,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        showToast(data.message || 'Could not add product to cart')
+        return
+      }
+
+      setCartItems(data.items || [])
+
+      setProducts((currentProducts) =>
+        currentProducts.map((item) =>
           getProductId(item) === productId
-            ? { ...item, quantity: item.quantity + 1 }
+            ? { ...item, stock: item.stock - 1 }
             : item
         )
       )
-    } else {
-      setCartItems([...cartItems, { ...product, quantity: 1 }])
+
+      showToast(`${product.name} added to cart`)
+    } catch (error) {
+      console.error('Add to cart error:', error)
+      showToast('Server error')
+    }
+  }
+  async function removeFromCart(idToRemove) {
+    const token = getToken()
+
+    if (!token) {
+      showToast('Please login first')
+      return
     }
 
-    setProducts(
-      products.map((item) =>
-        getProductId(item) === productId
-          ? { ...item, stock: item.stock - 1 }
-          : item
-      )
-    )
-
-    showToast(`${product.name} added to cart`)
-  }
-
-  function removeFromCart(idToRemove) {
     const removedItem = cartItems.find(
       (item) => getProductId(item) === idToRemove
     )
 
-    if (removedItem) {
-      setProducts(
-        products.map((product) =>
-          getProductId(product) === idToRemove
-            ? { ...product, stock: product.stock + removedItem.quantity }
-            : product
-        )
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/cart/${idToRemove}`,
+        {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       )
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        showToast(data.message || 'Could not remove product')
+        return
+      }
+
+      setCartItems(data.items || [])
+
+      if (removedItem) {
+        setProducts((currentProducts) =>
+          currentProducts.map((product) =>
+            getProductId(product) === idToRemove
+              ? {
+                ...product,
+                stock: product.stock + removedItem.quantity,
+              }
+              : product
+          )
+        )
+      }
+
+      showToast('Item removed from cart')
+    } catch (error) {
+      console.error('Remove cart error:', error)
+      showToast('Server error')
     }
-
-    const updatedCart = cartItems.filter(
-      (item) => getProductId(item) !== idToRemove
-    )
-
-    setCartItems(updatedCart)
-    showToast('Item removed from cart')
   }
 
-  function changeQuantity(id, amount) {
-    const cartItem = cartItems.find((item) => getProductId(item) === id)
-    const product = products.find((product) => getProductId(product) === id)
+  async function changeQuantity(id, amount) {
+    const token = getToken()
 
-    if (!cartItem || !product) return
+    if (!token) {
+      showToast('Please login first')
+      return
+    }
 
-    if (amount > 0 && product.stock <= 0) {
+    const cartItem = cartItems.find(
+      (item) => getProductId(item) === id
+    )
+
+    const product = products.find(
+      (item) => getProductId(item) === id
+    )
+
+    if (!cartItem) return
+
+    if (amount > 0 && product && product.stock <= 0) {
       showToast(`${product.name} is out of stock`)
       return
     }
 
-    const updatedCart = cartItems
-      .map((item) =>
-        getProductId(item) === id
-          ? { ...item, quantity: item.quantity + amount }
-          : item
-      )
-      .filter((item) => item.quantity > 0)
+    const newQuantity = cartItem.quantity + amount
 
-    setCartItems(updatedCart)
+    if (newQuantity <= 0) {
+      await removeFromCart(id)
+      return
+    }
 
-    setProducts(
-      products.map((product) =>
-        getProductId(product) === id
-          ? { ...product, stock: product.stock - amount }
-          : product
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/cart/${id}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            quantity: newQuantity,
+          }),
+        }
       )
-    )
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        showToast(data.message || 'Could not update quantity')
+        return
+      }
+
+      setCartItems(data.items || [])
+
+      setProducts((currentProducts) =>
+        currentProducts.map((item) =>
+          getProductId(item) === id
+            ? { ...item, stock: item.stock - amount }
+            : item
+        )
+      )
+    } catch (error) {
+      console.error('Quantity update error:', error)
+      showToast('Server error')
+    }
   }
   function toggleWishlist(product) {
     const productId = getProductId(product)
@@ -210,11 +327,36 @@ function App() {
     }
   }
 
-  function clearCart() {
-    setCartItems([])
-    showToast('Order placed successfully')
-  }
+  async function clearCart() {
+    const token = getToken()
 
+    if (!token) {
+      setCartItems([])
+      return
+    }
+
+    try {
+      const response = await fetch('http://localhost:5000/api/cart', {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        showToast(data.message || 'Could not clear cart')
+        return
+      }
+
+      setCartItems(data.items || [])
+      showToast('Order placed successfully')
+    } catch (error) {
+      console.error('Clear cart error:', error)
+      showToast('Server error')
+    }
+  }
   function saveOrder(order) {
     setOrders([...orders, order])
   }
@@ -374,16 +516,17 @@ function App() {
         />
 
         <Route path="/categories" element={<Categories />} />
-
         <Route
           path="/cart"
           element={
-            <Cart
-              cartItems={cartItems}
-              totalPrice={totalPrice}
-              removeFromCart={removeFromCart}
-              changeQuantity={changeQuantity}
-            />
+            <ProtectedRoute>
+              <Cart
+                cartItems={cartItems}
+                totalPrice={totalPrice}
+                removeFromCart={removeFromCart}
+                changeQuantity={changeQuantity}
+              />
+            </ProtectedRoute>
           }
         />
 

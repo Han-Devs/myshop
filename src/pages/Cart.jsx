@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom'
 
 function Cart(props) {
-  const getProductId = (item) => item._id || item.id
+  const getProductId = (item) =>
+    item.productId || item._id || item.id
 
   return (
     <section className="cart-page">
@@ -25,46 +26,63 @@ function Cart(props) {
       ) : (
         <div className="cart-layout">
           <div className="cart-items-list">
-            {props.cartItems.map((item) => (
-              <div className="cart-product" key={getProductId(item)}>
-                <img
-                  src={
-                    item.image?.startsWith("/uploads")
-                      ? `http://localhost:5000${item.image}`
-                      : item.image
-                  }
-                  alt={item.name}
-                />
+            {props.cartItems.map((item) => {
+              const productId = getProductId(item)
 
-                <div className="cart-product-info">
-                  <h3>{item.name}</h3>
-                  <p>${item.price} each</p>
+              return (
+                <div
+                  className="cart-product"
+                  key={item._id || productId}
+                >
+                  <img
+                    src={
+                      item.image?.startsWith('/uploads')
+                        ? `http://localhost:5000${item.image}`
+                        : item.image
+                    }
+                    alt={item.name}
+                  />
 
-                  <div className="cart-quantity">
-                    <button onClick={() => props.changeQuantity(getProductId(item), -1)}>
-                      -
-                    </button>
+                  <div className="cart-product-info">
+                    <h3>{item.name}</h3>
+                    <p>${item.price} each</p>
 
-                    <span>{item.quantity}</span>
+                    <div className="cart-quantity">
+                      <button
+                        onClick={() =>
+                          props.changeQuantity(productId, -1)
+                        }
+                      >
+                        -
+                      </button>
 
-                    <button onClick={() => props.changeQuantity(getProductId(item), 1)}>
-                      +
+                      <span>{item.quantity}</span>
+
+                      <button
+                        onClick={() =>
+                          props.changeQuantity(productId, 1)
+                        }
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="cart-product-actions">
+                    <h3>${item.price * item.quantity}</h3>
+
+                    <button
+                      className="remove-btn"
+                      onClick={() =>
+                        props.removeFromCart(productId)
+                      }
+                    >
+                      Remove
                     </button>
                   </div>
                 </div>
-
-                <div className="cart-product-actions">
-                  <h3>${item.price * item.quantity}</h3>
-
-                  <button
-                    className="remove-btn"
-                    onClick={() => props.removeFromCart(getProductId(item))}
-                  >
-                    Remove
-                  </button>
-                </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
 
           <div className="cart-summary">
