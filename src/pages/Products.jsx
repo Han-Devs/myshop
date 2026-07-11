@@ -8,7 +8,8 @@ function Products({ products, addToCart, toggleWishlist, wishlistItems }) {
   const [sort, setSort] = useState('default')
   const [searchParams] = useSearchParams()
 
-  const getProductId = (product) => product._id || product.id
+  const getProductId = (product) =>
+    product.productId || product._id || product.id
 
   useEffect(() => {
     const selectedCategory = searchParams.get('category')

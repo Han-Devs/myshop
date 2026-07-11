@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom'
 
 function Wishlist({ wishlistItems, toggleWishlist, addToCart }) {
-  const getProductId = (item) => item._id || item.id
+  const getProductId = (item) =>
+    item.productId || item._id || item.id
 
   const getImageUrl = (image) => {
     if (!image) return ''
@@ -21,7 +22,9 @@ function Wishlist({ wishlistItems, toggleWishlist, addToCart }) {
     <section className="wishlist-page">
       <div className="products-header">
         <p className="section-badge">Favorites</p>
+
         <h1>Your Wishlist</h1>
+
         <p className="section-subtitle">
           Save your favorite products for later.
         </p>
@@ -38,46 +41,50 @@ function Wishlist({ wishlistItems, toggleWishlist, addToCart }) {
         </div>
       ) : (
         <div className="cards wishlist-grid">
-          {wishlistItems.map((item, index) => (
-            <div
-              className="wishlist-card"
-              key={getProductId(item) || index}
-            >
-              <div className="wishlist-image-box">
-                <img
-                  src={getImageUrl(item.image)}
-                  alt={item.name}
-                  className="product-image"
-                />
+          {wishlistItems.map((item, index) => {
+            const productId = getProductId(item)
+
+            return (
+              <div
+                className="wishlist-card"
+                key={item._id || productId || index}
+              >
+                <div className="wishlist-image-box">
+                  <img
+                    src={getImageUrl(item.image)}
+                    alt={item.name}
+                    className="product-image"
+                  />
+                </div>
+
+                <h3>{item.name}</h3>
+
+                <p className="wishlist-category">
+                  {item.category}
+                </p>
+
+                <p className="wishlist-price">
+                  ${item.price}
+                </p>
+
+                <div className="wishlist-buttons">
+                  <button
+                    className="cart-btn"
+                    onClick={() => addToCart(item)}
+                  >
+                    🛒 Add to Cart
+                  </button>
+
+                  <button
+                    className="remove-btn"
+                    onClick={() => toggleWishlist(item)}
+                  >
+                    ❤️ Remove
+                  </button>
+                </div>
               </div>
-
-              <h3>{item.name}</h3>
-
-              <p className="wishlist-category">
-                {item.category}
-              </p>
-
-              <p className="wishlist-price">
-                ${item.price}
-              </p>
-
-              <div className="wishlist-buttons">
-                <button
-                  className="cart-btn"
-                  onClick={() => addToCart(item)}
-                >
-                  🛒 Add to Cart
-                </button>
-
-                <button
-                  className="remove-btn"
-                  onClick={() => toggleWishlist(item)}
-                >
-                  ❤️ Remove
-                </button>
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
     </section>

@@ -28,10 +28,7 @@ import AdminLogin from './pages/AdminLogin'
 function App() {
   const [cartItems, setCartItems] = useState([])
 
-  const [wishlistItems, setWishlistItems] = useState(() => {
-    const savedWishlist = localStorage.getItem('wishlist')
-    return savedWishlist ? JSON.parse(savedWishlist) : []
-  })
+  const [wishlistItems, setWishlistItems] = useState([])
 
   const [toast, setToast] = useState('')
 
@@ -101,10 +98,42 @@ function App() {
   }, [currentUser])
 
 
-
   useEffect(() => {
-    localStorage.setItem('wishlist', JSON.stringify(wishlistItems))
-  }, [wishlistItems])
+    async function fetchUserWishlist() {
+      const token = getToken()
+
+      if (!currentUser || !token) {
+        setWishlistItems([])
+        return
+      }
+
+      try {
+        const response = await fetch(
+          'http://localhost:5000/api/wishlist',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
+
+        const data = await response.json()
+
+        if (!response.ok) {
+          console.error(data.message)
+          setWishlistItems([])
+          return
+        }
+
+        setWishlistItems(data.items || [])
+      } catch (error) {
+        console.error('Wishlist fetch error:', error)
+        setWishlistItems([])
+      }
+    }
+
+    fetchUserWishlist()
+  }, [currentUser])
 
   useEffect(() => {
     localStorage.setItem('orders', JSON.stringify(orders))
@@ -307,26 +336,76 @@ function App() {
       showToast('Server error')
     }
   }
-  function toggleWishlist(product) {
+  async function toggleWishlist(product) {
+    const token = getToken()
+
+    if (!token || !currentUser) {
+      showToast('Please login to use wishlist')
+      return
+    }
+
     const productId = getProductId(product)
 
     const existingItem = wishlistItems.find(
       (item) => getProductId(item) === productId
     )
 
-    if (existingItem) {
-      const updatedWishlist = wishlistItems.filter(
-        (item) => getProductId(item) !== productId
-      )
+    try {
+      if (existingItem) {
+        const response = await fetch(
+          `http://localhost:5000/api/wishlist/${productId}`,
+          {
+            method: 'DELETE',
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
 
-      setWishlistItems(updatedWishlist)
-      showToast(`${product.name} removed from wishlist`)
-    } else {
-      setWishlistItems([...wishlistItems, product])
-      showToast(`${product.name} added to wishlist`)
+        const data = await response.json()
+
+        if (!response.ok) {
+          showToast(data.message || 'Could not remove from wishlist')
+          return
+        }
+
+        setWishlistItems(data.items || [])
+        showToast(`${product.name} removed from wishlist`)
+      } else {
+        const response = await fetch(
+          'http://localhost:5000/api/wishlist',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              _id: productId,
+              name: product.name,
+              image: product.image,
+              price: product.price,
+              category: product.category,
+              stock: product.stock,
+            }),
+          }
+        )
+
+        const data = await response.json()
+
+        if (!response.ok) {
+          showToast(data.message || 'Could not add to wishlist')
+          return
+        }
+
+        setWishlistItems(data.items || [])
+        showToast(`${product.name} added to wishlist`)
+      }
+    } catch (error) {
+      console.error('Wishlist error:', error)
+      showToast('Server error')
     }
   }
-
   async function clearCart() {
     const token = getToken()
 
