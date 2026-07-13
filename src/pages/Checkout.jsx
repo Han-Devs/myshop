@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
-function Checkout({ cartItems, totalPrice, clearCart, saveOrder }) {
+function Checkout({ cartItems, totalPrice, clearCart }) {
   const [orderPlaced, setOrderPlaced] = useState(false)
   const [error, setError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const [formData, setFormData] = useState({
     name: '',
@@ -14,14 +15,21 @@ function Checkout({ cartItems, totalPrice, clearCart, saveOrder }) {
   })
 
   function handleChange(e) {
-    setFormData({
-      ...formData,
+    setFormData((currentFormData) => ({
+      ...currentFormData,
       [e.target.name]: e.target.value,
-    })
+    }))
   }
 
-  function placeOrder() {
-    if (!formData.name || !formData.email || !formData.phone || !formData.address) {
+  async function placeOrder() {
+    setError('')
+
+    if (
+      !formData.name.trim() ||
+      !formData.email.trim() ||
+      !formData.phone.trim() ||
+      !formData.address.trim()
+    ) {
       setError('Please fill in all fields')
       return
     }
@@ -33,32 +41,80 @@ function Checkout({ cartItems, totalPrice, clearCart, saveOrder }) {
       return
     }
 
-    if (formData.phone.length < 8) {
+    if (formData.phone.trim().length < 8) {
       setError('Please enter a valid phone number')
       return
     }
 
-    const order = {
-      id: Date.now(),
-      customer: formData,
-      items: cartItems,
-      total: totalPrice,
-      date: new Date().toLocaleString(),
-      status: 'Pending',
+    if (cartItems.length === 0) {
+      setError('Your cart is empty')
+      return
     }
 
-    saveOrder(order)
-    setOrderPlaced(true)
-    clearCart()
-    setError('')
+    const token = localStorage.getItem('token')
 
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      address: '',
-      payment: 'Cash on Delivery',
-    })
+    if (!token) {
+      setError('Please log in before placing an order')
+      return
+    }
+
+    const orderItems = cartItems.map((item) => ({
+      productId: item.productId || item._id || item.id,
+      name: item.name,
+      image: item.image || '',
+      price: Number(item.price),
+      quantity: Number(item.quantity),
+    }))
+
+    try {
+      setIsSubmitting(true)
+
+      const response = await fetch(
+        'http://localhost:5000/api/orders',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            items: orderItems,
+            customer: {
+              name: formData.name.trim(),
+              email: formData.email.trim(),
+              phone: formData.phone.trim(),
+              address: formData.address.trim(),
+              payment: formData.payment,
+            },
+            totalPrice: Number(totalPrice),
+          }),
+        }
+      )
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        setError(data.message || 'Could not place order')
+        return
+      }
+
+      await clearCart()
+
+      setOrderPlaced(true)
+
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        address: '',
+        payment: 'Cash on Delivery',
+      })
+    } catch (requestError) {
+      console.error('Place order error:', requestError)
+      setError('Server error. Please try again.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -74,7 +130,9 @@ function Checkout({ cartItems, totalPrice, clearCart, saveOrder }) {
       {orderPlaced ? (
         <div className="checkout-success">
           <h2>Order Placed Successfully ✅</h2>
-          <p>Thank you for shopping with MyShop.</p>
+          <p>
+            Your order has been saved to your account.
+          </p>
 
           <Link to="/orders">
             <button>View Orders</button>
@@ -94,7 +152,11 @@ function Checkout({ cartItems, totalPrice, clearCart, saveOrder }) {
           <div className="checkout-card">
             <h2>Shipping Information</h2>
 
-            {error && <p className="checkout-error">{error}</p>}
+            {error && (
+              <p className="checkout-error">
+                {error}
+              </p>
+            )}
 
             <input
               type="text"
@@ -102,6 +164,7 @@ function Checkout({ cartItems, totalPrice, clearCart, saveOrder }) {
               placeholder="Full Name"
               value={formData.name}
               onChange={handleChange}
+              disabled={isSubmitting}
             />
 
             <input
@@ -110,6 +173,7 @@ function Checkout({ cartItems, totalPrice, clearCart, saveOrder }) {
               placeholder="Email Address"
               value={formData.email}
               onChange={handleChange}
+              disabled={isSubmitting}
             />
 
             <input
@@ -118,6 +182,7 @@ function Checkout({ cartItems, totalPrice, clearCart, saveOrder }) {
               placeholder="Phone Number"
               value={formData.phone}
               onChange={handleChange}
+              disabled={isSubmitting}
             />
 
             <textarea
@@ -126,12 +191,14 @@ function Checkout({ cartItems, totalPrice, clearCart, saveOrder }) {
               placeholder="Shipping Address"
               value={formData.address}
               onChange={handleChange}
-            ></textarea>
+              disabled={isSubmitting}
+            />
 
             <select
               name="payment"
               value={formData.payment}
               onChange={handleChange}
+              disabled={isSubmitting}
             >
               <option>Cash on Delivery</option>
               <option>Credit Card</option>
@@ -144,16 +211,32 @@ function Checkout({ cartItems, totalPrice, clearCart, saveOrder }) {
               <span>↩️ Easy Returns</span>
             </div>
 
-            <button onClick={placeOrder}>Place Order</button>
+            <button
+              type="button"
+              onClick={placeOrder}
+              disabled={isSubmitting}
+            >
+              {isSubmitting
+                ? 'Placing Order...'
+                : 'Place Order'}
+            </button>
           </div>
 
           <div className="checkout-card checkout-summary">
             <h2>Order Summary</h2>
 
             {cartItems.map((item) => (
-              <div className="checkout-item" key={item._id || item.id}>
-                <span>{item.name} x {item.quantity}</span>
-                <strong>${item.price * item.quantity}</strong>
+              <div
+                className="checkout-item"
+                key={item._id || item.productId || item.id}
+              >
+                <span>
+                  {item.name} × {item.quantity}
+                </span>
+
+                <strong>
+                  ${item.price * item.quantity}
+                </strong>
               </div>
             ))}
 

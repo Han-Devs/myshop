@@ -643,7 +643,7 @@ function App() {
                 cartItems={cartItems}
                 totalPrice={totalPrice}
                 clearCart={clearCart}
-                saveOrder={saveOrder}
+                
               />
             </ProtectedRoute>
           }
