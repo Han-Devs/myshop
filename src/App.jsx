@@ -594,7 +594,7 @@ function App() {
                 <div className="cards">
                   {products
                     .filter((product) => product.featured)
-                    .slice(0, 5)
+                    .slice(0, 6)
                     .map((product) => (
                       <ProductCard
                         key={getProductId(product)}
