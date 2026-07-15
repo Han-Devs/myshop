@@ -1,4 +1,8 @@
-import { Routes, Route } from 'react-router-dom'
+import {
+  Routes,
+  Route,
+  Navigate,
+} from 'react-router-dom'
 
 import { useState, useEffect } from 'react'
 import './App.css'
@@ -29,13 +33,11 @@ function App() {
   const [cartItems, setCartItems] = useState([])
 
   const [wishlistItems, setWishlistItems] = useState([])
+  const [orders, setOrders] = useState([])
 
   const [toast, setToast] = useState('')
 
-  const [orders, setOrders] = useState(() => {
-    const savedOrders = localStorage.getItem('orders')
-    return savedOrders ? JSON.parse(savedOrders) : []
-  })
+
 
   const [darkMode, setDarkMode] = useState(() => {
     const savedTheme = localStorage.getItem('darkMode')
@@ -43,6 +45,7 @@ function App() {
   })
 
   const [products, setProducts] = useState([])
+  const [adminOrders, setAdminOrders] = useState([])
 
   const [currentUser, setCurrentUser] = useState(() => {
     return JSON.parse(localStorage.getItem('currentUser'))
@@ -134,10 +137,42 @@ function App() {
 
     fetchUserWishlist()
   }, [currentUser])
-
   useEffect(() => {
-    localStorage.setItem('orders', JSON.stringify(orders))
-  }, [orders])
+    async function fetchOrders() {
+      const token = getToken()
+
+      if (!token || !currentUser) {
+        setOrders([])
+        return
+      }
+
+      try {
+        const response = await fetch(
+          'http://localhost:5000/api/orders',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
+
+        const data = await response.json()
+
+        if (!response.ok) {
+          setOrders([])
+          return
+        }
+
+        setOrders(data)
+      } catch (error) {
+        console.log(error)
+        setOrders([])
+      }
+    }
+
+    fetchOrders()
+  }, [currentUser])
+
 
   useEffect(() => {
     localStorage.setItem('darkMode', JSON.stringify(darkMode))
@@ -146,6 +181,13 @@ function App() {
   useEffect(() => {
     localStorage.setItem('isAdmin', JSON.stringify(isAdmin))
   }, [isAdmin])
+  useEffect(() => {
+    if (isAdmin && currentUser?.role === 'admin') {
+      fetchAdminOrders()
+    } else {
+      setAdminOrders([])
+    }
+  }, [isAdmin, currentUser])
   const totalPrice = cartItems.reduce((total, item) => {
     return total + item.price * item.quantity
   }, 0)
@@ -163,6 +205,86 @@ function App() {
   }
   function getToken() {
     return localStorage.getItem('token')
+  }
+  async function fetchAdminOrders() {
+    const token = getToken()
+
+    if (!token || !isAdmin) {
+      setAdminOrders([])
+      return
+    }
+
+    try {
+      const response = await fetch(
+        'http://localhost:5000/api/orders/admin',
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        console.error(
+          'Admin orders request failed:',
+          response.status,
+          data.message
+        )
+
+        showToast(data.message || 'Could not load admin orders')
+        setAdminOrders([])
+        return
+      }
+
+      setAdminOrders(data)
+    } catch (error) {
+      console.error('Admin orders fetch error:', error)
+      setAdminOrders([])
+    }
+  }
+  async function updateAdminOrderStatus(orderId, newStatus) {
+    const token = getToken()
+
+    if (!token) {
+      showToast('Admin token not found')
+      return
+    }
+
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/orders/${orderId}/status`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            status: newStatus,
+          }),
+        }
+      )
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        showToast(data.message || 'Could not update order status')
+        return
+      }
+
+      setAdminOrders((currentOrders) =>
+        currentOrders.map((order) =>
+          order._id === orderId ? data : order
+        )
+      )
+
+      showToast(`Order status changed to ${newStatus}`)
+    } catch (error) {
+      console.error('Order status update error:', error)
+      showToast('Server error')
+    }
   }
 
   async function addToCart(product) {
@@ -436,24 +558,8 @@ function App() {
       showToast('Server error')
     }
   }
-  function saveOrder(order) {
-    setOrders([...orders, order])
-  }
 
-  function clearOrders() {
-    setOrders([])
-    showToast('Order history cleared')
-  }
-  function updateOrderStatus(orderId, newStatus) {
-    const updatedOrders = orders.map((order) =>
-      order.id === orderId
-        ? { ...order, status: newStatus }
-        : order
-    )
 
-    setOrders(updatedOrders)
-    showToast('Order status updated')
-  }
 
   return (
     <div className={darkMode ? 'app dark' : 'app'}>
@@ -643,7 +749,7 @@ function App() {
                 cartItems={cartItems}
                 totalPrice={totalPrice}
                 clearCart={clearCart}
-                
+
               />
             </ProtectedRoute>
           }
@@ -655,7 +761,6 @@ function App() {
             <ProtectedRoute>
               <Orders
                 orders={orders}
-                clearOrders={clearOrders}
               />
             </ProtectedRoute>
           }
@@ -664,29 +769,32 @@ function App() {
           path="/admin-login"
           element={
             <AdminLogin
-              isAdmin={isAdmin}
               setIsAdmin={setIsAdmin}
+              setCurrentUser={setCurrentUser}
             />
           }
         />
         <Route
           path="/admin"
           element={
-            isAdmin ? (
+            currentUser?.role === 'admin' ? (
               <Admin
-                orders={orders}
-                updateOrderStatus={updateOrderStatus}
+                orders={adminOrders}
                 products={products}
                 setProducts={setProducts}
+                updateOrderStatus={updateAdminOrderStatus}
               />
             ) : (
-              <AdminLogin isAdmin={isAdmin} setIsAdmin={setIsAdmin} />
+              <Navigate to="/" replace />
             )
           }
         />
         <Route
           path="/login"
-          element={<Login setCurrentUser={setCurrentUser} />}
+          element={<Login
+            setCurrentUser={setCurrentUser}
+            setIsAdmin={setIsAdmin}
+          />}
         />
 
         <Route

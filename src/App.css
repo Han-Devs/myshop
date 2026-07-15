@@ -457,33 +457,62 @@ button:hover {
   display: inline-block;
   padding: 6px 12px;
   border-radius: 20px;
-  font-size: 14px;
-  font-weight: 700;
-  text-transform: capitalize;
+  font-weight: bold;
+  color: white;
 }
 
-/* Pending */
 .status.pending {
   background: #f59e0b;
-  color: white;
 }
 
-/* Shipped */
+.status.processing {
+  background: #3b82f6;
+}
+
 .status.shipped {
-  background: #2563eb;
-  color: white;
+  background: #8b5cf6;
 }
 
-/* Delivered */
 .status.delivered {
-  background: #16a34a;
-  color: white;
+  background: #22c55e;
 }
 
-/* Cancelled */
 .status.cancelled {
-  background: #dc2626;
+  background: #ef4444;
+}
+
+/* ===========================
+   Admin Dashboard Dropdown
+=========================== */
+
+.status-select {
+  border: none;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: bold;
   color: white;
+  cursor: pointer;
+  outline: none;
+}
+
+.status-select.pending {
+  background: #f59e0b;
+}
+
+.status-select.processing {
+  background: #3b82f6;
+}
+
+.status-select.shipped {
+  background: #8b5cf6;
+}
+
+.status-select.delivered {
+  background: #22c55e;
+}
+
+.status-select.cancelled {
+  background: #ef4444;
 }
 
 /* Admin Dropdown */
@@ -2107,6 +2136,7 @@ button:hover {
     z-index: 3002;
   }
 }
+
 .image-preview {
   width: 100%;
   height: 160px;
@@ -2120,6 +2150,7 @@ button:hover {
 .app.dark .image-preview {
   background: #1e293b;
 }
+
 .featured-toggle {
   display: flex;
   justify-content: center;
@@ -2132,6 +2163,7 @@ button:hover {
 .featured-toggle input {
   width: auto;
 }
+
 .profile-page {
   min-height: 70vh;
   padding: 80px 20px;
@@ -2253,6 +2285,7 @@ button:hover {
     text-align: center;
   }
 }
+
 .auth-page {
   min-height: 75vh;
   padding: 80px 20px;
@@ -2340,6 +2373,7 @@ button:hover {
 .app.dark .auth-card p {
   color: #cbd5e1;
 }
+
 .products-page {
   padding-top: 80px;
 }
@@ -2537,6 +2571,7 @@ button:hover {
     max-width: 340px;
   }
 }
+
 /* Homepage Featured Products */
 
 .featured-section .product-card {
@@ -2559,6 +2594,7 @@ button:hover {
 .featured-section .product-price {
   font-size: 34px;
 }
+
 /* Match Products page background with Home page */
 
 .products-page {
@@ -2577,6 +2613,7 @@ button:hover {
     linear-gradient(135deg, #f8fbff, #eef4ff, #e0f2fe);
   color: #0f172a;
 }
+
 /* Force Products page to match Home background */
 
 .app.dark .products.products-page {
@@ -2594,6 +2631,7 @@ button:hover {
     linear-gradient(135deg, #f8fbff, #eef4ff, #e0f2fe) !important;
   color: #0f172a;
 }
+
 /* =========================
    Categories Page
 ========================= */
@@ -2603,16 +2641,16 @@ button:hover {
   padding: 80px 20px;
 
   background:
-    radial-gradient(circle at 10% 20%, rgba(37,99,235,.12), transparent 28%),
-    radial-gradient(circle at 90% 20%, rgba(6,182,212,.12), transparent 28%),
-    linear-gradient(135deg,#f8fbff,#eef4ff,#e0f2fe);
+    radial-gradient(circle at 10% 20%, rgba(37, 99, 235, .12), transparent 28%),
+    radial-gradient(circle at 90% 20%, rgba(6, 182, 212, .12), transparent 28%),
+    linear-gradient(135deg, #f8fbff, #eef4ff, #e0f2fe);
 }
 
 .app.dark .categories-page {
   background:
-    radial-gradient(circle at 10% 20%, rgba(37,99,235,.28), transparent 28%),
-    radial-gradient(circle at 90% 20%, rgba(124,58,237,.28), transparent 28%),
-    linear-gradient(135deg,#0f172a,#1e3a8a,#312e81);
+    radial-gradient(circle at 10% 20%, rgba(37, 99, 235, .28), transparent 28%),
+    radial-gradient(circle at 90% 20%, rgba(124, 58, 237, .28), transparent 28%),
+    linear-gradient(135deg, #0f172a, #1e3a8a, #312e81);
 }
 
 .category-grid {
@@ -2630,23 +2668,23 @@ button:hover {
 
   border-radius: 28px;
 
-  background: rgba(255,255,255,.88);
+  background: rgba(255, 255, 255, .88);
 
   backdrop-filter: blur(16px);
 
-  box-shadow: 0 20px 45px rgba(15,23,42,.12);
+  box-shadow: 0 20px 45px rgba(15, 23, 42, .12);
 
   transition: .3s;
 }
 
 .app.dark .category-card-premium {
-  background: rgba(30,41,59,.88);
+  background: rgba(30, 41, 59, .88);
   color: white;
 }
 
 .category-card-premium:hover {
   transform: translateY(-10px);
-  box-shadow: 0 30px 60px rgba(37,99,235,.22);
+  box-shadow: 0 30px 60px rgba(37, 99, 235, .22);
 }
 
 .category-icon-big {
@@ -2664,11 +2702,11 @@ button:hover {
 
   font-size: 42px;
 
-  background: linear-gradient(135deg,#2563eb,#06b6d4);
+  background: linear-gradient(135deg, #2563eb, #06b6d4);
 
   color: white;
 
-  box-shadow: 0 15px 35px rgba(37,99,235,.35);
+  box-shadow: 0 15px 35px rgba(37, 99, 235, .35);
 }
 
 .category-card-premium h2 {
@@ -2695,24 +2733,25 @@ button:hover {
 
   font-weight: 700;
 
-  background: linear-gradient(135deg,#2563eb,#06b6d4);
+  background: linear-gradient(135deg, #2563eb, #06b6d4);
 
   color: white;
 
   cursor: pointer;
 }
 
-@media (max-width:768px){
+@media (max-width:768px) {
 
-.category-card-premium{
+  .category-card-premium {
 
-width:100%;
+    width: 100%;
 
-max-width:360px;
+    max-width: 360px;
+
+  }
 
 }
 
-}
 .details-page {
   min-height: 100vh;
   padding: 80px 8%;
@@ -2900,6 +2939,7 @@ max-width:360px;
     font-size: 34px;
   }
 }
+
 .cart-page {
   min-height: 100vh;
   padding: 80px 8%;
@@ -3051,6 +3091,7 @@ max-width:360px;
     text-align: center;
   }
 }
+
 /* =========================
    Wishlist
 ========================= */
@@ -3060,16 +3101,16 @@ max-width:360px;
   padding: 80px 8%;
 
   background:
-    radial-gradient(circle at 10% 20%, rgba(37,99,235,.12), transparent 28%),
-    radial-gradient(circle at 90% 20%, rgba(6,182,212,.12), transparent 28%),
-    linear-gradient(135deg,#f8fbff,#eef4ff,#e0f2fe);
+    radial-gradient(circle at 10% 20%, rgba(37, 99, 235, .12), transparent 28%),
+    radial-gradient(circle at 90% 20%, rgba(6, 182, 212, .12), transparent 28%),
+    linear-gradient(135deg, #f8fbff, #eef4ff, #e0f2fe);
 }
 
 .app.dark .wishlist-page {
   background:
-    radial-gradient(circle at 10% 20%, rgba(37,99,235,.28), transparent 28%),
-    radial-gradient(circle at 90% 20%, rgba(124,58,237,.28), transparent 28%),
-    linear-gradient(135deg,#0f172a,#1e3a8a,#312e81);
+    radial-gradient(circle at 10% 20%, rgba(37, 99, 235, .28), transparent 28%),
+    radial-gradient(circle at 90% 20%, rgba(124, 58, 237, .28), transparent 28%),
+    linear-gradient(135deg, #0f172a, #1e3a8a, #312e81);
 }
 
 .wishlist-grid {
@@ -3084,17 +3125,17 @@ max-width:360px;
 
   border-radius: 26px;
 
-  background: rgba(255,255,255,.88);
+  background: rgba(255, 255, 255, .88);
 
   backdrop-filter: blur(16px);
 
-  box-shadow: 0 20px 45px rgba(37,99,235,.14);
+  box-shadow: 0 20px 45px rgba(37, 99, 235, .14);
 
   transition: .3s;
 }
 
 .app.dark .wishlist-card {
-  background: rgba(30,41,59,.88);
+  background: rgba(30, 41, 59, .88);
   color: white;
 }
 
@@ -3113,11 +3154,11 @@ max-width:360px;
 
   margin-bottom: 18px;
 
-  background: rgba(241,245,249,.85);
+  background: rgba(241, 245, 249, .85);
 }
 
 .app.dark .wishlist-image-box {
-  background: rgba(15,23,42,.75);
+  background: rgba(15, 23, 42, .75);
 }
 
 .wishlist-image-box img {
@@ -3149,31 +3190,32 @@ max-width:360px;
   width: 100%;
 }
 
-@media (max-width:768px){
+@media (max-width:768px) {
 
-.wishlist-card{
+  .wishlist-card {
 
-width:100%;
+    width: 100%;
 
-max-width:340px;
+    max-width: 340px;
+
+  }
 
 }
 
-}
 .checkout-page {
   min-height: 100vh;
   padding: 80px 8%;
   background:
-    radial-gradient(circle at 10% 20%, rgba(37,99,235,.12), transparent 28%),
-    radial-gradient(circle at 90% 20%, rgba(6,182,212,.12), transparent 28%),
-    linear-gradient(135deg,#f8fbff,#eef4ff,#e0f2fe);
+    radial-gradient(circle at 10% 20%, rgba(37, 99, 235, .12), transparent 28%),
+    radial-gradient(circle at 90% 20%, rgba(6, 182, 212, .12), transparent 28%),
+    linear-gradient(135deg, #f8fbff, #eef4ff, #e0f2fe);
 }
 
 .app.dark .checkout-page {
   background:
-    radial-gradient(circle at 10% 20%, rgba(37,99,235,.28), transparent 28%),
-    radial-gradient(circle at 90% 20%, rgba(124,58,237,.28), transparent 28%),
-    linear-gradient(135deg,#0f172a,#1e3a8a,#312e81);
+    radial-gradient(circle at 10% 20%, rgba(37, 99, 235, .28), transparent 28%),
+    radial-gradient(circle at 90% 20%, rgba(124, 58, 237, .28), transparent 28%),
+    linear-gradient(135deg, #0f172a, #1e3a8a, #312e81);
 }
 
 .checkout-layout {
@@ -3188,14 +3230,14 @@ max-width:340px;
 .checkout-success {
   padding: 30px;
   border-radius: 26px;
-  background: rgba(255,255,255,.88);
-  box-shadow: 0 20px 45px rgba(37,99,235,.14);
+  background: rgba(255, 255, 255, .88);
+  box-shadow: 0 20px 45px rgba(37, 99, 235, .14);
   backdrop-filter: blur(16px);
 }
 
 .app.dark .checkout-card,
 .app.dark .checkout-success {
-  background: rgba(30,41,59,.88);
+  background: rgba(30, 41, 59, .88);
   color: white;
 }
 
@@ -3206,7 +3248,7 @@ max-width:340px;
   padding: 14px 16px;
   margin-top: 13px;
   border-radius: 14px;
-  border: 1px solid rgba(100,116,139,.35);
+  border: 1px solid rgba(100, 116, 139, .35);
   font-size: 15px;
 }
 
@@ -3217,7 +3259,7 @@ max-width:340px;
   padding: 14px;
   border-radius: 14px;
   font-weight: 900;
-  background: linear-gradient(135deg,#2563eb,#06b6d4);
+  background: linear-gradient(135deg, #2563eb, #06b6d4);
 }
 
 .checkout-error {
@@ -3243,7 +3285,7 @@ max-width:340px;
 
 .summary-total {
   padding-top: 18px;
-  border-top: 1px solid rgba(100,116,139,.25);
+  border-top: 1px solid rgba(100, 116, 139, .25);
   font-size: 22px;
 }
 
@@ -3258,20 +3300,21 @@ max-width:340px;
     grid-template-columns: 1fr;
   }
 }
+
 .orders-page {
   min-height: 100vh;
   padding: 80px 8%;
   background:
-    radial-gradient(circle at 10% 20%, rgba(37,99,235,.12), transparent 28%),
-    radial-gradient(circle at 90% 20%, rgba(6,182,212,.12), transparent 28%),
-    linear-gradient(135deg,#f8fbff,#eef4ff,#e0f2fe);
+    radial-gradient(circle at 10% 20%, rgba(37, 99, 235, .12), transparent 28%),
+    radial-gradient(circle at 90% 20%, rgba(6, 182, 212, .12), transparent 28%),
+    linear-gradient(135deg, #f8fbff, #eef4ff, #e0f2fe);
 }
 
 .app.dark .orders-page {
   background:
-    radial-gradient(circle at 10% 20%, rgba(37,99,235,.28), transparent 28%),
-    radial-gradient(circle at 90% 20%, rgba(124,58,237,.28), transparent 28%),
-    linear-gradient(135deg,#0f172a,#1e3a8a,#312e81);
+    radial-gradient(circle at 10% 20%, rgba(37, 99, 235, .28), transparent 28%),
+    radial-gradient(circle at 90% 20%, rgba(124, 58, 237, .28), transparent 28%),
+    linear-gradient(135deg, #0f172a, #1e3a8a, #312e81);
 }
 
 .orders-actions {
@@ -3290,13 +3333,13 @@ max-width:340px;
 .order-card {
   padding: 26px;
   border-radius: 26px;
-  background: rgba(255,255,255,.88);
-  box-shadow: 0 20px 45px rgba(37,99,235,.14);
+  background: rgba(255, 255, 255, .88);
+  box-shadow: 0 20px 45px rgba(37, 99, 235, .14);
   backdrop-filter: blur(16px);
 }
 
 .app.dark .order-card {
-  background: rgba(30,41,59,.88);
+  background: rgba(30, 41, 59, .88);
   color: white;
 }
 
@@ -3326,7 +3369,7 @@ max-width:340px;
 .order-items {
   padding: 18px;
   border-radius: 18px;
-  background: rgba(37,99,235,.08);
+  background: rgba(37, 99, 235, .08);
 }
 
 .order-items h4 {
@@ -3349,6 +3392,7 @@ max-width:340px;
     flex-direction: column;
   }
 }
+
 /* =========================
    Contact Page
 ========================= */
@@ -3358,16 +3402,16 @@ max-width:340px;
   padding: 80px 8%;
 
   background:
-    radial-gradient(circle at 10% 20%, rgba(37,99,235,.12), transparent 28%),
-    radial-gradient(circle at 90% 20%, rgba(6,182,212,.12), transparent 28%),
-    linear-gradient(135deg,#f8fbff,#eef4ff,#e0f2fe);
+    radial-gradient(circle at 10% 20%, rgba(37, 99, 235, .12), transparent 28%),
+    radial-gradient(circle at 90% 20%, rgba(6, 182, 212, .12), transparent 28%),
+    linear-gradient(135deg, #f8fbff, #eef4ff, #e0f2fe);
 }
 
 .app.dark .contact-page {
   background:
-    radial-gradient(circle at 10% 20%, rgba(37,99,235,.28), transparent 28%),
-    radial-gradient(circle at 90% 20%, rgba(124,58,237,.28), transparent 28%),
-    linear-gradient(135deg,#0f172a,#1e3a8a,#312e81);
+    radial-gradient(circle at 10% 20%, rgba(37, 99, 235, .28), transparent 28%),
+    radial-gradient(circle at 90% 20%, rgba(124, 58, 237, .28), transparent 28%),
+    linear-gradient(135deg, #0f172a, #1e3a8a, #312e81);
 }
 
 .contact-layout {
@@ -3386,16 +3430,16 @@ max-width:340px;
 
   border-radius: 26px;
 
-  background: rgba(255,255,255,.88);
+  background: rgba(255, 255, 255, .88);
 
   backdrop-filter: blur(16px);
 
-  box-shadow: 0 20px 45px rgba(37,99,235,.14);
+  box-shadow: 0 20px 45px rgba(37, 99, 235, .14);
 }
 
 .app.dark .contact-info-card,
 .app.dark .contact-form-card {
-  background: rgba(30,41,59,.88);
+  background: rgba(30, 41, 59, .88);
   color: white;
 }
 
@@ -3437,7 +3481,7 @@ max-width:340px;
 
   border-radius: 14px;
 
-  border: 1px solid rgba(100,116,139,.35);
+  border: 1px solid rgba(100, 116, 139, .35);
 
   font-size: 15px;
 }
@@ -3449,18 +3493,19 @@ max-width:340px;
 
   font-weight: 800;
 
-  background: linear-gradient(135deg,#2563eb,#06b6d4);
+  background: linear-gradient(135deg, #2563eb, #06b6d4);
 }
 
-@media (max-width:850px){
+@media (max-width:850px) {
 
-.contact-layout{
+  .contact-layout {
 
-grid-template-columns:1fr;
+    grid-template-columns: 1fr;
+
+  }
 
 }
 
-}
 /* =========================
    Admin Dashboard Polish
 ========================= */
@@ -3469,32 +3514,32 @@ grid-template-columns:1fr;
   min-height: 100vh;
   padding: 80px 8%;
   background:
-    radial-gradient(circle at 10% 20%, rgba(37,99,235,.12), transparent 28%),
-    radial-gradient(circle at 90% 20%, rgba(6,182,212,.12), transparent 28%),
-    linear-gradient(135deg,#f8fbff,#eef4ff,#e0f2fe);
+    radial-gradient(circle at 10% 20%, rgba(37, 99, 235, .12), transparent 28%),
+    radial-gradient(circle at 90% 20%, rgba(6, 182, 212, .12), transparent 28%),
+    linear-gradient(135deg, #f8fbff, #eef4ff, #e0f2fe);
 }
 
 .app.dark .products:has(.sales-chart) {
   background:
-    radial-gradient(circle at 10% 20%, rgba(37,99,235,.28), transparent 28%),
-    radial-gradient(circle at 90% 20%, rgba(124,58,237,.28), transparent 28%),
-    linear-gradient(135deg,#0f172a,#1e3a8a,#312e81);
+    radial-gradient(circle at 10% 20%, rgba(37, 99, 235, .28), transparent 28%),
+    radial-gradient(circle at 90% 20%, rgba(124, 58, 237, .28), transparent 28%),
+    linear-gradient(135deg, #0f172a, #1e3a8a, #312e81);
 }
 
-.products:has(.sales-chart) > h1 {
+.products:has(.sales-chart)>h1 {
   font-size: 42px;
   margin-bottom: 35px;
 }
 
 .products:has(.sales-chart) .card {
   border-radius: 26px;
-  background: rgba(255,255,255,.88);
-  box-shadow: 0 20px 45px rgba(37,99,235,.14);
+  background: rgba(255, 255, 255, .88);
+  box-shadow: 0 20px 45px rgba(37, 99, 235, .14);
   backdrop-filter: blur(16px);
 }
 
 .app.dark .products:has(.sales-chart) .card {
-  background: rgba(30,41,59,.88);
+  background: rgba(30, 41, 59, .88);
   color: white;
 }
 
@@ -3504,11 +3549,11 @@ grid-template-columns:1fr;
 
 .chart-bar-bg {
   height: 18px;
-  background: rgba(148,163,184,.35);
+  background: rgba(148, 163, 184, .35);
 }
 
 .chart-bar {
-  background: linear-gradient(135deg,#2563eb,#06b6d4);
+  background: linear-gradient(135deg, #2563eb, #06b6d4);
 }
 
 .admin-form {
@@ -3529,12 +3574,14 @@ grid-template-columns:1fr;
 }
 
 .featured-toggle {
-  background: rgba(37,99,235,.08);
+  background: rgba(37, 99, 235, .08);
   padding: 10px;
   border-radius: 14px;
 }
+
 /* Mobile: 2 cards per row */
 @media (max-width: 600px) {
+
   .cards,
   .product-grid,
   .category-grid {
@@ -3572,6 +3619,7 @@ grid-template-columns:1fr;
     padding: 10px;
   }
 }
+
 @media (max-width: 600px) {
   .featured-section .cards {
     display: grid;
@@ -3584,6 +3632,7 @@ grid-template-columns:1fr;
     max-width: 320px;
   }
 }
+
 @media (max-width: 600px) {
   .hero-laptop {
     display: none;
@@ -3596,4 +3645,37 @@ grid-template-columns:1fr;
   .hero-shoes {
     width: 140px;
   }
+}
+/* Admin order status dropdown */
+.order-card select.status-select {
+  width: auto;
+  min-width: 125px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 20px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  outline: none;
+  appearance: auto;
+}
+
+.order-card select.status-select.pending {
+  background-color: #f59e0b;
+}
+
+.order-card select.status-select.processing {
+  background-color: #3b82f6;
+}
+
+.order-card select.status-select.shipped {
+  background-color: #8b5cf6;
+}
+
+.order-card select.status-select.delivered {
+  background-color: #22c55e;
+}
+
+.order-card select.status-select.cancelled {
+  background-color: #ef4444;
 }

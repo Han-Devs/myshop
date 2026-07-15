@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-function Login({ setCurrentUser }) {
+function Login({
+  setCurrentUser,
+  setIsAdmin,
+}) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -43,6 +46,15 @@ function Login({ setCurrentUser }) {
       localStorage.setItem("currentUser", JSON.stringify(loggedInUser));
 
       setCurrentUser(loggedInUser);
+
+      const adminStatus = data.user.role === "admin";
+
+      setIsAdmin(adminStatus);
+
+      localStorage.setItem(
+        "isAdmin",
+        JSON.stringify(adminStatus)
+      );
 
       alert("Login successful");
 

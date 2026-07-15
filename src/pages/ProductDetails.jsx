@@ -3,7 +3,8 @@ import { Link, useParams } from 'react-router-dom'
 function ProductDetails({ products, addToCart, toggleWishlist, wishlistItems }) {
   const { id } = useParams()
 
-  const getProductId = (product) => product._id || product.id
+  const getProductId = (product) =>
+  product.productId || product._id || product.id
 
   const getImageUrl = (image) => {
     return image?.startsWith('/uploads')

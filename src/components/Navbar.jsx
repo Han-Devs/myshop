@@ -19,17 +19,16 @@ function Navbar({
 
   function handleLogout() {
     localStorage.removeItem('currentUser')
-    localStorage.removeItem('token') // Remove JWT token too
+    localStorage.removeItem('token')
+    localStorage.removeItem('isAdmin')
 
     setCurrentUser(null)
+    setIsAdmin(false)
+
     closeMenu()
   }
 
-  function handleAdminLogout() {
-    localStorage.removeItem('isAdmin')
-    setIsAdmin(false)
-    closeMenu()
-  }
+
 
   return (
     <>
@@ -67,7 +66,7 @@ function Navbar({
             </Link>
           </li>
 
-          {isAdmin ? (
+          {currentUser?.role === 'admin' ? (
             <li>
               <Link to="/admin" onClick={closeMenu}>
                 🛠 Dashboard
@@ -80,7 +79,6 @@ function Navbar({
               </Link>
             </li>
           )}
-
           {currentUser ? (
             <>
               <li>
@@ -100,12 +98,7 @@ function Navbar({
             </>
           )}
 
-          {isAdmin && (
-            <li>
-              <button onClick={handleAdminLogout}>Admin Logout</button>
-            </li>
-          )}
-
+          
           <li>
             <button
               onClick={() => {

@@ -1,6 +1,11 @@
 import { useState } from 'react'
 
-function Admin({ orders, updateOrderStatus, products, setProducts }) {
+function Admin({
+  orders = [],
+  products,
+  setProducts,
+  updateOrderStatus,
+}) {
   const [name, setName] = useState('')
   const [price, setPrice] = useState('')
   const [category, setCategory] = useState('Electronics')
@@ -17,7 +22,7 @@ function Admin({ orders, updateOrderStatus, products, setProducts }) {
   }
 
   const totalRevenue = orders.reduce((total, order) => {
-    return total + (order.total || 0)
+    return total + (order.totalPrice || 0)
   }, 0)
 
   const totalProductsSold = orders.reduce((total, order) => {
@@ -27,12 +32,18 @@ function Admin({ orders, updateOrderStatus, products, setProducts }) {
   }, 0)
 
   const productSales = products.map((product) => {
-    const sold = orders.reduce((total, order) => {
-      const foundItem = (order.items || []).find(
-        (item) => getProductId(item) === getProductId(product)
-      )
+    const productId = String(getProductId(product))
 
-      return total + (foundItem ? foundItem.quantity : 0)
+    const sold = orders.reduce((total, order) => {
+      const matchingItem = (order.items || []).find((item) => {
+        const orderProductId = String(
+          item.productId || item._id || item.id
+        )
+
+        return orderProductId === productId
+      })
+
+      return total + (matchingItem?.quantity || 0)
     }, 0)
 
     return {
@@ -202,50 +213,91 @@ function Admin({ orders, updateOrderStatus, products, setProducts }) {
         ))}
       </div>
 
-      <h2 style={{ marginTop: '40px' }}>Manage Orders</h2>
 
-      {orders.length === 0 ? (
-        <p>No orders yet.</p>
-      ) : (
-        <div className="cards">
-          {orders.map((order) => {
-            const status = order.status || 'Pending'
+      <div className="admin-orders-section">
+        <h2>Customer Orders</h2>
 
-            return (
-              <div className="card" key={order.id}>
-                <h3>Order #{order.id}</h3>
+        {orders.length === 0 ? (
+          <div className="empty-state">
+            <h3>No orders found</h3>
+          </div>
+        ) : (
+          <div className="orders-list">
+            {orders.map((order) => (
+              <div className="order-card" key={order._id}>
+                <div className="order-header">
+                  <div>
+                    <h3>
+                      Order #{order._id?.slice(-8)}
+                    </h3>
 
-                <p>
-                  <strong>Customer:</strong> {order.customer?.name || 'Unknown'}
-                </p>
+                    <p>
+                      {order.createdAt
+                        ? new Date(order.createdAt).toLocaleString()
+                        : 'No date'}
+                    </p>
+                  </div>
 
-                <p>
-                  <strong>Total:</strong> ${order.total || 0}
-                </p>
+                  <select
+                    className={`status-select ${order.status.toLowerCase()}`}
+                    value={order.status}
+                    onChange={(e) =>
+                      updateOrderStatus(order._id, e.target.value)
+                    }
+                  >
+                    <option value="Pending">Pending</option>
+                    <option value="Processing">Processing</option>
+                    <option value="Shipped">Shipped</option>
+                    <option value="Delivered">Delivered</option>
+                    <option value="Cancelled">Cancelled</option>
+                  </select>
+                </div>
 
-                <p>
-                  <strong>Status:</strong>{' '}
-                  <span className={`status ${status.toLowerCase()}`}>
-                    {status}
-                  </span>
-                </p>
+                <div className="order-info">
+                  <p>
+                    <strong>Customer:</strong>{' '}
+                    {order.customer?.name || 'Unknown'}
+                  </p>
 
-                <select
-                  value={status}
-                  onChange={(e) =>
-                    updateOrderStatus(order.id, e.target.value)
-                  }
-                >
-                  <option>Pending</option>
-                  <option>Shipped</option>
-                  <option>Delivered</option>
-                  <option>Cancelled</option>
-                </select>
+                  <p>
+                    <strong>Email:</strong>{' '}
+                    {order.customer?.email || 'Unknown'}
+                  </p>
+
+                  <p>
+                    <strong>Payment:</strong>{' '}
+                    {order.customer?.payment || 'Unknown'}
+                  </p>
+
+                  <p>
+                    <strong>Total:</strong> $
+                    {order.totalPrice || 0}
+                  </p>
+                </div>
+
+                <div className="order-items">
+                  <h4>Items</h4>
+
+                  {(order.items || []).map((item) => (
+                    <div
+                      className="order-item"
+                      key={item._id || item.productId}
+                    >
+                      <span>
+                        {item.name} × {item.quantity}
+                      </span>
+
+                      <strong>
+                        ${item.price * item.quantity}
+                      </strong>
+                    </div>
+                  ))}
+                </div>
               </div>
-            )
-          })}
-        </div>
-      )}
+            ))}
+          </div>
+        )}
+      </div>
 
       <h2 style={{ marginTop: '50px' }}>Manage Products</h2>
 
