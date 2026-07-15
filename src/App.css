@@ -3921,3 +3921,602 @@ button:hover {
     font-size: 15px !important;
   }
 }
+/* Product Details page — mobile */
+@media (max-width: 600px) {
+  .details-page {
+    padding: 20px 10px;
+  }
+
+  .details-card {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    width: 100%;
+    padding: 14px;
+    box-sizing: border-box;
+  }
+
+  .details-image-box {
+    width: 100%;
+    height: 240px;
+    padding: 14px;
+    box-sizing: border-box;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .details-image-box img {
+    width: 100%;
+    height: 100%;
+    max-width: 220px;
+    max-height: 220px;
+    object-fit: contain;
+  }
+
+  .details-info {
+    width: 100%;
+    text-align: center;
+  }
+
+  .details-category {
+    font-size: 12px;
+  }
+
+  .details-info h1 {
+    font-size: 26px;
+    line-height: 1.2;
+    margin: 8px 0;
+  }
+
+  .details-rating {
+    font-size: 13px;
+  }
+
+  .details-info h2 {
+    font-size: 28px;
+    margin: 10px 0;
+  }
+
+  .details-stock {
+    font-size: 14px;
+  }
+
+  .details-description {
+    font-size: 14px;
+    line-height: 1.6;
+    text-align: left;
+  }
+
+  .details-benefits {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin: 16px 0;
+  }
+
+  .details-benefits span {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+
+  .details-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .details-actions button {
+    width: 100%;
+    min-height: 44px;
+    font-size: 13px;
+  }
+
+  .related-section {
+    margin-top: 28px;
+  }
+
+  .related-section h2 {
+    font-size: 24px;
+    text-align: center;
+  }
+
+  .related-products {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    width: 100%;
+  }
+
+  .related-card {
+    width: 100%;
+    min-width: 0;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+
+  .related-card img {
+    width: 100%;
+    height: 110px;
+    object-fit: contain;
+  }
+
+  .related-card h3 {
+    font-size: 14px;
+    line-height: 1.2;
+    min-height: 34px;
+  }
+
+  .related-card p {
+    font-size: 16px;
+  }
+}
+/* Checkout page — mobile */
+@media (max-width: 600px) {
+  .checkout-page {
+    padding: 18px 10px 28px;
+  }
+
+  .checkout-page .products-header {
+    margin-bottom: 20px;
+  }
+
+  .checkout-page .products-header h1 {
+    font-size: 28px;
+    line-height: 1.2;
+  }
+
+  .checkout-page .section-subtitle {
+    font-size: 13px;
+    line-height: 1.5;
+    padding: 0 8px;
+  }
+
+  .checkout-layout {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 18px !important;
+    width: 100%;
+  }
+
+  .checkout-card {
+    width: 100% !important;
+    max-width: none !important;
+    padding: 18px 14px !important;
+    box-sizing: border-box;
+    border-radius: 20px;
+  }
+
+  .checkout-card h2 {
+    margin-bottom: 14px;
+    font-size: 22px;
+    line-height: 1.2;
+  }
+
+  .checkout-card input,
+  .checkout-card textarea,
+  .checkout-card select {
+    width: 100% !important;
+    min-height: 46px;
+    margin-bottom: 12px;
+    padding: 12px 14px !important;
+    box-sizing: border-box;
+    font-size: 14px;
+    border-radius: 12px;
+  }
+
+  .checkout-card textarea {
+    min-height: 105px;
+    resize: vertical;
+  }
+
+  .checkout-benefits {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin: 12px 0 16px;
+  }
+
+  .checkout-benefits span {
+    font-size: 13px;
+  }
+
+  .checkout-card > button {
+    width: 100% !important;
+    min-height: 46px;
+    padding: 11px 8px !important;
+    font-size: 13px;
+  }
+
+  .checkout-summary {
+    padding: 18px 14px !important;
+  }
+
+  .checkout-item,
+  .summary-row,
+  .summary-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .checkout-item span,
+  .summary-row span,
+  .summary-total span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .checkout-item strong,
+  .summary-row strong,
+  .summary-total strong {
+    flex-shrink: 0;
+  }
+
+  .checkout-item {
+    padding: 10px 0;
+    font-size: 13px;
+  }
+
+  .summary-row {
+    padding: 10px 0;
+    font-size: 13px;
+  }
+
+  .summary-total {
+    margin-top: 8px;
+    padding-top: 14px;
+    font-size: 18px;
+  }
+
+  .checkout-error {
+    margin-bottom: 12px;
+    font-size: 12px;
+    line-height: 1.4;
+  }
+}
+/* Orders page — mobile */
+@media (max-width: 600px) {
+  .orders-page {
+    padding: 18px 10px 28px;
+  }
+
+  .orders-page .products-header {
+    margin-bottom: 20px;
+  }
+
+  .orders-page .products-header h1 {
+    font-size: 28px;
+    line-height: 1.2;
+  }
+
+  .orders-page .section-subtitle {
+    font-size: 13px;
+    line-height: 1.5;
+    padding: 0 8px;
+  }
+
+  .orders-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    width: 100%;
+  }
+
+  .order-card {
+    width: 100% !important;
+    max-width: none !important;
+    padding: 16px 14px !important;
+    box-sizing: border-box;
+    border-radius: 20px;
+  }
+
+  .order-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .order-header h3 {
+    max-width: 100%;
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+  }
+
+  .order-header p {
+    margin: 3px 0 0;
+    font-size: 12px;
+  }
+
+  .order-header .status {
+    align-self: flex-start;
+    padding: 6px 11px;
+    font-size: 11px;
+  }
+
+  .order-info {
+    margin: 14px 0;
+  }
+
+  .order-info p {
+    margin: 5px 0;
+    font-size: 13px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+  }
+
+  .order-items {
+    padding: 12px !important;
+    border-radius: 14px;
+  }
+
+  .order-items h4 {
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
+
+  .order-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 6px 0;
+    font-size: 12px;
+  }
+
+  .order-item span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .order-item strong {
+    flex-shrink: 0;
+  }
+}
+/* Profile page — mobile */
+@media (max-width: 600px) {
+  .profile-page {
+    padding: 24px 10px 32px;
+  }
+
+  .profile-card {
+    width: 100% !important;
+    max-width: none !important;
+    padding: 20px 14px !important;
+    box-sizing: border-box;
+    border-radius: 22px;
+  }
+
+  .profile-header {
+    text-align: center;
+  }
+
+  .profile-avatar {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 12px;
+    font-size: 28px;
+  }
+
+  .profile-header h1,
+  .profile-header h2 {
+    font-size: 26px;
+    line-height: 1.2;
+  }
+
+  .profile-header p {
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  .profile-info {
+    padding: 14px !important;
+    margin: 16px 0;
+    border-radius: 15px;
+  }
+
+  .profile-info p {
+    margin: 5px 0;
+    font-size: 13px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+  }
+
+  .profile-card label {
+    display: block;
+    margin: 12px 0 6px;
+    font-size: 13px;
+  }
+
+  .profile-card input {
+    width: 100% !important;
+    min-height: 46px;
+    padding: 11px 13px !important;
+    box-sizing: border-box;
+    font-size: 14px;
+    border-radius: 11px;
+  }
+
+  .profile-card h3 {
+    margin: 18px 0 8px;
+    font-size: 19px;
+  }
+
+  .profile-card button {
+    width: 100% !important;
+    min-height: 46px;
+    margin-top: 16px;
+    padding: 11px 8px !important;
+    font-size: 13px;
+  }
+}
+/* Footer Mobile — 2 columns */
+@media (max-width: 600px) {
+  .footer,
+  footer {
+    padding: 32px 16px 22px;
+    text-align: center;
+  }
+
+  .footer-content,
+  .footer-container {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px 16px;
+    width: 100%;
+    align-items: start;
+  }
+
+  /* MyShop description takes the full first row */
+  .footer-section:first-child {
+    grid-column: 1 / -1;
+    width: 100%;
+    margin-bottom: 4px;
+  }
+
+  .footer-section {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .footer-section h2,
+  .footer-section h3 {
+    margin-bottom: 10px;
+    font-size: 18px;
+    line-height: 1.2;
+  }
+
+  .footer-section:first-child h2,
+  .footer-section:first-child h3 {
+    font-size: 26px;
+  }
+
+  .footer-section p {
+    max-width: 320px;
+    margin: 0 auto;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .footer-section ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .footer-section li {
+    margin: 7px 0;
+  }
+
+  .footer-section a {
+    font-size: 14px;
+  }
+
+  /* Copyright takes the full final row */
+  .footer-bottom {
+    grid-column: 1 / -1;
+    width: 100%;
+    margin-top: 8px;
+    padding-top: 18px;
+    font-size: 12px;
+  }
+}
+/* Wishlist page — mobile */
+@media (max-width: 600px) {
+  .wishlist-page {
+    padding: 20px 10px 30px;
+  }
+
+  .wishlist-page .products-header {
+    margin-bottom: 22px;
+  }
+
+  .wishlist-page .products-header h1 {
+    font-size: 28px;
+    line-height: 1.2;
+  }
+
+  .wishlist-page .section-subtitle {
+    font-size: 13px;
+    line-height: 1.5;
+    padding: 0 8px;
+  }
+
+  .wishlist-grid,
+  .wishlist-page .cards,
+  .wishlist-page .product-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 14px 10px !important;
+    width: 100% !important;
+    padding: 0 !important;
+    align-items: stretch;
+  }
+
+  .wishlist-card,
+  .wishlist-page .card,
+  .wishlist-page .product-card {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 10px 7px 12px !important;
+    box-sizing: border-box;
+    overflow: hidden;
+    border-radius: 18px;
+  }
+
+  .wishlist-card img,
+  .wishlist-page .card img,
+  .wishlist-page .product-image {
+    width: 100% !important;
+    height: 120px !important;
+    object-fit: contain !important;
+    margin: 0 auto 10px !important;
+  }
+
+  .wishlist-card h3,
+  .wishlist-page .card h3,
+  .wishlist-page .product-card h3 {
+    min-height: 34px;
+    margin: 6px 0 4px;
+    font-size: 14px !important;
+    line-height: 1.15;
+    text-align: center;
+    overflow-wrap: anywhere;
+  }
+
+  .wishlist-card .category,
+  .wishlist-page .product-category {
+    min-height: 14px;
+    margin: 2px 0;
+    font-size: 9px !important;
+  }
+
+  .wishlist-card .price,
+  .wishlist-page .product-price {
+    margin: 7px 0 !important;
+    font-size: 19px !important;
+  }
+
+  .wishlist-card button,
+  .wishlist-page .card button,
+  .wishlist-page .product-btn,
+  .wishlist-page .remove-btn {
+    width: 100% !important;
+    min-height: 38px;
+    margin-top: 7px;
+    padding: 7px 4px !important;
+    font-size: 10px !important;
+    line-height: 1.15;
+    white-space: normal;
+  }
+}
