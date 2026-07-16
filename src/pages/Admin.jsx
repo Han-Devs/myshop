@@ -1,5 +1,5 @@
 import { useState } from 'react'
-
+import { API_BASE_URL } from '../config/api'
 function Admin({
   orders = [],
   products,
@@ -17,7 +17,7 @@ function Admin({
 
   const getImageUrl = (image) => {
     return image?.startsWith('/uploads')
-      ? `http://localhost:5000${image}`
+      ? `${API_BASE_URL}${image}`
       : image
   }
 
@@ -86,7 +86,7 @@ function Admin({
     formData.append('description', `This is a high quality ${name}.`)
     formData.append('image', image)
 
-    const response = await fetch('http://localhost:5000/api/products', {
+    const response = await fetch(`${API_BASE_URL}/api/products`, {
       method: 'POST',
       body: formData,
     })
@@ -98,7 +98,7 @@ function Admin({
   }
 
   async function deleteProduct(id) {
-    await fetch(`http://localhost:5000/api/products/${id}`, {
+    await fetch(`${API_BASE_URL}/api/products/${id}`, {
       method: 'DELETE',
     })
 
@@ -110,7 +110,7 @@ function Admin({
 
     if (!product) return
 
-    const response = await fetch(`http://localhost:5000/api/products/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/api/products/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -144,7 +144,7 @@ function Admin({
       return
     }
 
-    const response = await fetch(`http://localhost:5000/api/products/${editingId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/products/${editingId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

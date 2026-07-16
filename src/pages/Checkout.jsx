@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { API_BASE_URL } from '../config/api'
 
-function Checkout({ cartItems, totalPrice, clearCart }) {
+function Checkout({ cartItems, totalPrice, clearCart, refreshProducts, }) {
   const [orderPlaced, setOrderPlaced] = useState(false)
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -70,7 +71,7 @@ function Checkout({ cartItems, totalPrice, clearCart }) {
       setIsSubmitting(true)
 
       const response = await fetch(
-        'http://localhost:5000/api/orders',
+        `${API_BASE_URL}/api/orders`,
         {
           method: 'POST',
           headers: {
@@ -92,13 +93,18 @@ function Checkout({ cartItems, totalPrice, clearCart }) {
       )
 
       const data = await response.json()
-
       if (!response.ok) {
         setError(data.message || 'Could not place order')
         return
       }
 
       await clearCart()
+
+      if (refreshProducts) {
+        await refreshProducts()
+      }
+
+      window.dispatchEvent(new Event('storage'))
 
       setOrderPlaced(true)
 

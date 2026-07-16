@@ -1,4 +1,5 @@
 import { Link, useParams } from 'react-router-dom'
+import { getImageUrl } from '../config/api'
 
 function ProductDetails({ products, addToCart, toggleWishlist, wishlistItems }) {
   const { id } = useParams()
@@ -6,12 +7,7 @@ function ProductDetails({ products, addToCart, toggleWishlist, wishlistItems }) 
   const getProductId = (product) =>
   product.productId || product._id || product.id
 
-  const getImageUrl = (image) => {
-    return image?.startsWith('/uploads')
-      ? `http://localhost:5000${image}`
-      : image
-  }
-
+ 
   const product = products.find(
     (item) => String(getProductId(item)) === String(id)
   )

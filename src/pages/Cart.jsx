@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-
+import { API_BASE_URL } from '../config/api'
 function Cart(props) {
   const getProductId = (item) =>
     item.productId || item._id || item.id
@@ -37,7 +37,7 @@ function Cart(props) {
                   <img
                     src={
                       item.image?.startsWith('/uploads')
-                        ? `http://localhost:5000${item.image}`
+                        ? `${API_BASE_URL}${item.image}`
                         : item.image
                     }
                     alt={item.name}

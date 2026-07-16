@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-
+import { API_BASE_URL } from '../config/api'
 function Profile({ currentUser, setCurrentUser }) {
   const [name, setName] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
@@ -11,7 +11,7 @@ function Profile({ currentUser, setCurrentUser }) {
       try {
         const token = localStorage.getItem("token");
 
-        const response = await fetch("http://localhost:5000/api/users/profile", {
+        const response = await fetch(`${API_BASE_URL}/api/users/profile`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -62,7 +62,7 @@ function Profile({ currentUser, setCurrentUser }) {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await fetch("http://localhost:5000/api/users/profile", {
+      const response = await fetch(`${API_BASE_URL}/api/users/profile`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

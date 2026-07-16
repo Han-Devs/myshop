@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-
+import { getImageUrl } from '../config/api'
 function ProductCard(props) {
   const inStock = props.stock > 0
 
@@ -12,11 +12,7 @@ function ProductCard(props) {
       <Link to={`/product/${props.id}`} className="product-card-link">
         <div className="product-image-box">
           <img
-            src={
-              props.image?.startsWith("/uploads")
-                ? `http://localhost:5000${props.image}`
-                : props.image
-            }
+            src={getImageUrl(props.image)}
             alt={props.name}
             className="product-image"
           />

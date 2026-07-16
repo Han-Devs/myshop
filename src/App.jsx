@@ -3,6 +3,7 @@ import {
   Route,
   Navigate,
 } from 'react-router-dom'
+import { API_BASE_URL } from './config/api'
 
 import { useState, useEffect } from 'react'
 import './App.css'
@@ -55,16 +56,25 @@ function App() {
     return JSON.parse(localStorage.getItem('isAdmin')) || false
   })
 
+  async function fetchProducts() {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/products`)
+      const data = await response.json()
+
+      if (!response.ok) {
+        console.error(data.message || 'Could not load products')
+        return
+      }
+
+      console.log('Products from backend:', data)
+      setProducts(data)
+    } catch (error) {
+      console.error('Backend fetch error:', error)
+    }
+  }
+
   useEffect(() => {
-    fetch('http://localhost:5000/api/products')
-      .then((response) => response.json())
-      .then((data) => {
-        console.log('Products from backend:', data)
-        setProducts(data)
-      })
-      .catch((error) => {
-        console.error('Backend fetch error:', error)
-      })
+    fetchProducts()
   }, [])
   useEffect(() => {
     async function fetchUserCart() {
@@ -76,7 +86,7 @@ function App() {
       }
 
       try {
-        const response = await fetch('http://localhost:5000/api/cart', {
+        const response = await fetch(`${API_BASE_URL}/api/cart`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -112,7 +122,7 @@ function App() {
 
       try {
         const response = await fetch(
-          'http://localhost:5000/api/wishlist',
+          `${API_BASE_URL}/api/wishlist`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -148,7 +158,7 @@ function App() {
 
       try {
         const response = await fetch(
-          'http://localhost:5000/api/orders',
+          `${API_BASE_URL}/api/orders`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -216,7 +226,7 @@ function App() {
 
     try {
       const response = await fetch(
-        'http://localhost:5000/api/orders/admin',
+        `${API_BASE_URL}/api/orders/admin`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -254,7 +264,7 @@ function App() {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/orders/${orderId}/status`,
+        `${API_BASE_URL}/api/orders/${orderId}/status`,
         {
           method: 'PUT',
           headers: {
@@ -303,7 +313,7 @@ function App() {
     const productId = getProductId(product)
 
     try {
-      const response = await fetch('http://localhost:5000/api/cart', {
+      const response = await fetch(`${API_BASE_URL}/api/cart`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -326,13 +336,7 @@ function App() {
 
       setCartItems(data.items || [])
 
-      setProducts((currentProducts) =>
-        currentProducts.map((item) =>
-          getProductId(item) === productId
-            ? { ...item, stock: item.stock - 1 }
-            : item
-        )
-      )
+
 
       showToast(`${product.name} added to cart`)
     } catch (error) {
@@ -348,13 +352,11 @@ function App() {
       return
     }
 
-    const removedItem = cartItems.find(
-      (item) => getProductId(item) === idToRemove
-    )
+
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/cart/${idToRemove}`,
+        `${API_BASE_URL}/api/cart/${idToRemove}`,
         {
           method: 'DELETE',
           headers: {
@@ -372,18 +374,6 @@ function App() {
 
       setCartItems(data.items || [])
 
-      if (removedItem) {
-        setProducts((currentProducts) =>
-          currentProducts.map((product) =>
-            getProductId(product) === idToRemove
-              ? {
-                ...product,
-                stock: product.stock + removedItem.quantity,
-              }
-              : product
-          )
-        )
-      }
 
       showToast('Item removed from cart')
     } catch (error) {
@@ -424,7 +414,7 @@ function App() {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/cart/${id}`,
+        `${API_BASE_URL}/api/cart/${id}`,
         {
           method: 'PUT',
           headers: {
@@ -446,13 +436,7 @@ function App() {
 
       setCartItems(data.items || [])
 
-      setProducts((currentProducts) =>
-        currentProducts.map((item) =>
-          getProductId(item) === id
-            ? { ...item, stock: item.stock - amount }
-            : item
-        )
-      )
+
     } catch (error) {
       console.error('Quantity update error:', error)
       showToast('Server error')
@@ -475,7 +459,7 @@ function App() {
     try {
       if (existingItem) {
         const response = await fetch(
-          `http://localhost:5000/api/wishlist/${productId}`,
+          `${API_BASE_URL}/api/wishlist/${productId}`,
           {
             method: 'DELETE',
             headers: {
@@ -495,7 +479,7 @@ function App() {
         showToast(`${product.name} removed from wishlist`)
       } else {
         const response = await fetch(
-          'http://localhost:5000/api/wishlist',
+          `${API_BASE_URL}/api/wishlist`,
           {
             method: 'POST',
             headers: {
@@ -537,7 +521,7 @@ function App() {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/cart', {
+      const response = await fetch(`${API_BASE_URL}/api/cart`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -749,6 +733,7 @@ function App() {
                 cartItems={cartItems}
                 totalPrice={totalPrice}
                 clearCart={clearCart}
+                refreshProducts={fetchProducts}
 
               />
             </ProtectedRoute>

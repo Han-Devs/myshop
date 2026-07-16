@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { API_BASE_URL } from '../config/api'
 
 function Wishlist({ wishlistItems, toggleWishlist, addToCart }) {
   const getProductId = (item) =>
@@ -8,11 +9,11 @@ function Wishlist({ wishlistItems, toggleWishlist, addToCart }) {
     if (!image) return ''
 
     if (image.startsWith('/uploads')) {
-      return `http://localhost:5000${image}`
+      return `${API_BASE_URL}${image}`
     }
 
     if (image.startsWith('uploads')) {
-      return `http://localhost:5000/${image}`
+      return `${API_BASE_URL}/${image}`
     }
 
     return image
