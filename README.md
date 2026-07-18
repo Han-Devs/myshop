@@ -95,24 +95,7 @@ https://myshop-backend-uriy.onrender.com
 
 ---
 
-## 📸 Screenshots
 
-### Homepage
-
-![Homepage](./screenshots/homepage.png)
-
-### Products Page
-
-![Products](./screenshots/products.png)
-
-### Cart Page
-
-![Cart](./screenshots/cart.png)
-
-### Checkout
-
-![Checkout](./screenshots/checkout.png)
----
 
 ## 🚀 Project Architecture
 
