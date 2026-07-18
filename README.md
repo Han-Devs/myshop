@@ -1,67 +1,181 @@
 # 🛒 MyShop
 
-MyShop is a modern responsive e-commerce website built with React and Vite.  
-It includes customer shopping features, authentication, product management, admin dashboard, dark mode, and a polished responsive UI.
+MyShop is a full-stack modern e-commerce web application built with React, Node.js, Express, and MongoDB.
+
+It provides a complete shopping experience with authentication, cart management, wishlist, order processing, stock synchronization, admin management, and a fully responsive user interface.
+
+---
 
 ## 🌐 Live Demo
 
-[Visit MyShop](https://myshop-alpha-inky.vercel.app)
+🔗 Frontend: https://myshop-alpha-inky.vercel.app
+
+🔗 Backend API:
+https://myshop-backend-uriy.onrender.com
+
+---
+
 ## ✨ Features
 
+### 👤 Customer Features
+
+- Customer registration and login
+- JWT authentication
+- Protected routes
+- Customer profile page
+- Change username
+- Change password with current password verification
+- Wishlist system
+- Shopping cart system
+- Quantity controls
+- Checkout system
+- Order history page
+- Persistent cart and wishlist data
 - Product search
 - Category filtering
 - Product sorting
 - Product details page
 - Related products
-- Wishlist
-- Cart with quantity controls
-- Checkout
-- Order history
-- Customer register/login/logout
-- Customer profile
-- Username change
-- Password change with current password verification
-- Protected customer routes
-- Admin login/logout
+- Dark/Light mode
+- Responsive mobile navigation
+
+---
+
+### 🛍 Product Features
+
+- Product stock management
+- Real-time stock synchronization
+- Featured products section
+- Dynamic product details pages
+- Product image uploads
+- Product persistence using MongoDB
+
+---
+
+### 🛠 Admin Features
+
+- Admin login
 - Admin dashboard
-- Add, edit, and delete products
-- Image upload from PC
-- Stock management
-- Featured product toggle
-- Sales chart
-- Light/Dark mode
-- Responsive desktop, tablet, and mobile design
-- Mobile hamburger menu
-- Scroll to top on route change
+- Add new products
+- Edit products
+- Delete products
+- Upload product images from PC
+- Toggle featured products
+- Sales dashboard and statistics
+- Order management
+
+---
 
 ## 🛠 Tech Stack
 
+### Frontend
+
 - React
 - Vite
-- JavaScript
-- React Router
-- CSS
-- LocalStorage
-- Git
-- GitHub
-- Vercel
+- React Router DOM
+- JavaScript (ES6+)
+- CSS3
+- Fetch API
 
-## 📌 Current Status
+### Backend
 
-Frontend is completed and deployed.  
-Backend development is planned next.
+- Node.js
+- Express.js
+- MongoDB Atlas
+- Mongoose
+- JWT Authentication
+- Multer (Image Upload)
 
-## 🚀 Future Improvements
+### Deployment
 
-- Backend with Node.js and Express
-- Database integration
-- Real authentication
-- Real admin accounts
-- Cloud image storage
+- Vercel (Frontend)
+- Render (Backend)
+- MongoDB Atlas (Database)
+- Git & GitHub
+
+---
+
+## 📸 Screenshots
+
+### Homepage
+
+![Homepage](./screenshots/homepage.png)
+
+### Products Page
+
+![Products](./screenshots/products.png)
+
+### Cart Page
+
+![Cart](./screenshots/cart.png)
+
+### Checkout
+
+![Checkout](./screenshots/checkout.png)
+---
+
+## 🚀 Project Architecture
+
+```text
+Frontend (React + Vite)
+            ↓
+Backend API (Express + Node.js)
+            ↓
+MongoDB Atlas
+```
+
+---
+
+## 📌 Completed Features
+
+✅ Authentication System
+
+✅ User Profile Management
+
+✅ Wishlist System
+
+✅ Shopping Cart System
+
+✅ Checkout & Orders
+
+✅ Admin Dashboard
+
+✅ Product CRUD Operations
+
+✅ Image Upload System
+
+✅ MongoDB Integration
+
+✅ JWT Protected Routes
+
+✅ Stock Synchronization
+
+✅ Responsive Design
+
+✅ Production Deployment
+
+---
+
+## 🔮 Future Improvements
+
 - Email verification
-- Forgot password by email
-- Real payment integration
+- Forgot password via email
+- Cloudinary image storage
+- Stripe payment integration
+- Product reviews and ratings
+- Product recommendations
+- Search suggestions
+- Order status tracking
+- Admin analytics improvements
 
-## 👤 Author
+---
 
-Built by Han-Devs.
+## 👨‍💻 Author
+
+**Han-Devs**
+
+Final Year ICT Student
+
+
+GitHub:
+https://github.com/Han-Devs/myshop
